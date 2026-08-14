@@ -1,0 +1,39 @@
+name: agen_analyze
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: analyst
+      POSTGRES_USER: analyst_admin
+      POSTGRES_PASSWORD: admin_dev_password
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U analyst_admin -d analyst"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init/01-roles.sql:/docker-entrypoint-initdb.d/01-roles.sql:ro
+    networks:
+      # "default" keeps the host->container port publish working (5433:5432); a service
+      # whose ONLY network is "internal: true" does not actually get its port published.
+      - default
+      - analysis_internal
+
+  python-sandbox:
+    profiles: ["sandbox-build"]
+    build:
+      context: ./sandbox
+    image: analyst-python-sandbox:phase6
+    networks:
+      - analysis_internal
+
+volumes:
+  postgres_data:
+
+networks:
+  analysis_internal:
+    internal: true

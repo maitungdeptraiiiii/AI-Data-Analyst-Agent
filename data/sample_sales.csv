@@ -1,0 +1,11 @@
+date,region,product,units,unit_price,revenue
+2026-06-01,North,Laptop,10,1000,10000
+2026-06-01,South,Laptop,8,1000,8000
+2026-06-01,North,Phone,30,500,15000
+2026-07-01,North,Laptop,6,1000,6000
+2026-07-01,South,Laptop,5,1000,5000
+2026-07-01,North,Phone,28,500,14000
+2026-08-01,North,Laptop,9,1000,9000
+2026-08-01,South,Laptop,7,1000,7000
+2026-08-01,North,Phone,32,500,16000
+

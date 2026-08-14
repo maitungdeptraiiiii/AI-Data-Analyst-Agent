@@ -1,0 +1,58 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "analyst-agent"
+version = "0.1.0"
+description = "A LangGraph-based AI data analyst"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "langgraph>=0.2",
+    "langgraph-checkpoint-sqlite>=3.0",
+    "langchain-anthropic>=0.3",
+    "langchain-openai>=0.3",
+    "openai>=1.0,<2.0",
+    "matplotlib>=3.9",
+    "pandas>=2.2",
+    "psycopg[binary,pool]>=3.2",
+    "pydantic>=2.9",
+    "pydantic-settings>=2.5",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.11",
+    "pandas-stubs>=2.2",
+    "pytest>=8.3",
+    "ruff>=0.6",
+]
+
+[project.scripts]
+analyst-agent = "analyst_agent.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/analyst_agent"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+markers = [
+    "integration: requires a running PostgreSQL instance",
+    "sandbox_integration: requires the built Python sandbox Docker image and PostgreSQL",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.13"
+packages = ["analyst_agent"]
+strict = true
+warn_unused_ignores = true
+follow_imports = "silent"
