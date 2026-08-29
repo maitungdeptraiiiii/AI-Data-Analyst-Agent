@@ -1,12 +1,19 @@
-# AI Data Analyst Agent — Phase 6
+# AI Data Analyst Agent — Phase 8b
 
-Phase 6 implements this synchronous LangGraph workflow:
+This LangGraph workflow is a 3-tier multi-agent pipeline, hybrid on purpose: the Orchestrator and
+Executor Agent stay in-process (subgraph-as-node), while the Executor Agent ↔ Tool Agent boundary
+runs over Redis Streams so SQL/Python Tool Agents are their own scalable worker processes:
 
 ```text
-Planner ⇄ Ask User → Data Inspector → Tool Router → SQL/Python Executor ⇄ Fix → Critic ⇄ Replanner → Chart → Reporter
+Planner ⇄ Ask User → Data Inspector
+  → Orchestrator: run_executor_agent (loops per plan step)
+      → Executor Agent: route tool → dispatch over Redis ⇄ local retry
+          → tasks:{sql,python} → SQL/Python Tool Agent worker → results:{correlation_id}
+  → Critic ⇄ Replanner → Chart Planner → Chart Creator
+  → Reporter ⇄ Grounding Verifier → Final Report
 ```
 
-The data inspector loads a CSV into PostgreSQL with `COPY`. The executor connects through a
+The data inspector loads a CSV into PostgreSQL with `COPY`. Tool Agent workers connect through a
 different PostgreSQL role that is forced to read-only mode and has a 10-second statement timeout.
 Questions that are off-topic, need clarification, or produce an empty plan skip ingestion and go
 straight to a safe explanatory response.
@@ -84,8 +91,9 @@ analysis completes. Set `CHECKPOINT_DB_PATH` to change the SQLite checkpoint loc
 
 The agent currently supports CSV input only. It executes one generated SQL query for each planner
 step and caps every result set at 200 rows. Retryable PostgreSQL errors are classified primarily by
-SQLSTATE, repaired with structured LLM output, and retried at most twice per analysis step. Policy
-violations and infrastructure failures are finalized without agent-level retry.
+SQLSTATE, repaired with structured LLM output, and retried at most twice per analysis step by the
+Executor Agent — this local retry loop is invisible to the Orchestrator, which only sees the final
+`ExecutorResult`. Policy violations and infrastructure failures are finalized without retry.
 
 After all planned SQL steps finish, a structured Critic checks evidence completeness. If evidence
 is missing, a Replanner creates at most three additional read-only SQL analysis goals without
@@ -113,11 +121,13 @@ SQLite checkpoints persist state across CLI processes; resume uses the same thre
 `Command(resume=...)`. Clarification history is preserved as structured user-provided context and
 propagated to every downstream LLM node. The loop is capped at three clarification rounds.
 
-Tool Router defaults to read-only PostgreSQL and selects Python only for bounded datasets and
-explicit statistical/advanced-analysis hints. Generated Python passes an AST policy guard and runs
-in a non-root, read-only Docker sandbox on an internal-only network. The sandbox can read PostgreSQL
-through `executor_ro` but has no public Internet route. SQL and Python share one execution retry
-lifecycle, and every analysis step records tool, code, JSON-safe rows, and deterministic metrics.
+The Executor Agent's Tool Router defaults to read-only PostgreSQL and selects Python only for
+bounded datasets and explicit statistical/advanced-analysis hints; each Tool Agent worker is bound
+to exactly one tool (least-privilege at the agent level, not just the sandbox). Generated Python
+passes an AST policy guard and runs in a non-root, read-only Docker sandbox on an internal-only
+network. The sandbox can read PostgreSQL through `executor_ro` but has no public Internet route.
+SQL and Python share one local retry lifecycle inside the Executor Agent, and every analysis step
+recorded in `analysis_log` still has tool, code, JSON-safe rows, and deterministic metrics.
 
 Build the sandbox image before running Python-routed analysis:
 
@@ -127,8 +137,9 @@ docker compose --profile sandbox-build build python-sandbox
 
 The Executor Agent talks to Tool Agents (SQL/Python) over Redis Streams (`tasks:sql`,
 `tasks:python`) instead of calling them in-process — start a worker per tool before running an
-analysis that needs it, or `execute_step` will block until `TOOL_AGENT_WAIT_TIMEOUT_SECONDS`
-elapses and report a retryable infrastructure error:
+analysis that needs it, or `dispatch_tool` will block until `TOOL_AGENT_WAIT_TIMEOUT_SECONDS`
+elapses and report a retryable infrastructure error (retried up to `execution_max_retries` times
+before the step is finalized as failed):
 
 ```powershell
 uv run analyst-agent-tool-worker sql
@@ -154,10 +165,13 @@ The integration test requires the PostgreSQL container and `POSTGRES_EXECUTOR_DS
 environment. PII redaction is deliberately marked as a Phase 11 TODO; use only non-sensitive data
 with this implementation.
 
-## Phase 7 boundaries
+## Current boundaries
 
 Grounding verifies citations and numeric claims in findings and root causes. Narrative summaries and
 recommendations are constrained by the Reporter prompt but are not independently fact-checked yet.
-Not implemented yet: API service, or observability. Redis Streams and the SQL/Python Tool Agent
-workers are implemented (see Run); the Chart Agent still runs in-process, after the Critic.
-Human-in-the-loop currently covers clarification only.
+The Orchestrator ↔ Executor Agent boundary is in-process (subgraph-as-node); only the Executor Agent
+↔ Tool Agent boundary runs over Redis Streams, on purpose (mục 6.3 in `PROJECT_DESIGN.md`) — that's
+the one place a hung/slow agent actually needs its own process and independent scaling. The Chart
+Agent still runs in-process after the Critic, not as a Redis-backed worker.
+Not implemented yet: an API service, or observability (LangSmith/OpenTelemetry, per-node cost and
+latency logging). Human-in-the-loop currently covers clarification only.
