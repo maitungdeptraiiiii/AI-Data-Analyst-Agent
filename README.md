@@ -2,16 +2,17 @@
 
 # 🧠 AI Data Analyst Agent
 
-**Multi-Agent Data Analytics Platform — LangGraph × Redis Streams × Deterministic Grounding**
+**Multi-Agent Data Analytics Platform powered by LangGraph, Redis Streams & Deterministic Grounding Verification**
 
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://python.org)
 [![LangGraph](https://img.shields.io/badge/LangGraph-Orchestration-1C3C3C?logo=langchain&logoColor=white)](https://langchain-ai.github.io/langgraph/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-Production_API-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)](https://postgresql.org)
-[![Redis](https://img.shields.io/badge/Redis-Streams_Bus-DC382D?logo=redis&logoColor=white)](https://redis.io)
+[![PostgreSQL 16](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)](https://postgresql.org)
+[![Redis Streams](https://img.shields.io/badge/Redis-Streams_Bus-DC382D?logo=redis&logoColor=white)](https://redis.io)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)](https://docker.com)
+[![Tests](https://img.shields.io/badge/Tests-116%20passed-brightgreen?logo=pytest&logoColor=white)](#-testing)
 
-*Production-ready AI agent that analyzes datasets, generates verified reports with deterministic grounding, and visualizes insights — all through a beautiful web interface.*
+*An end-to-end AI agent that takes a natural-language question about a CSV dataset and produces a fully verified analytical report — with SQL/Python evidence, automated chart generation, root cause analysis, and actionable recommendations.*
 
 </div>
 
@@ -21,7 +22,7 @@
 
 - [Overview](#-overview)
 - [Key Features](#-key-features)
-- [Architecture](#-architecture)
+- [System Architecture](#-system-architecture)
 - [Tech Stack](#-tech-stack)
 - [Prerequisites](#-prerequisites)
 - [Installation & Setup](#-installation--setup)
@@ -32,77 +33,99 @@
   - [Evaluation Harness](#3-evaluation-harness)
 - [Project Structure](#-project-structure)
 - [Pipeline Deep Dive](#-pipeline-deep-dive)
+- [Multi-Agent Communication](#-multi-agent-communication)
 - [Testing](#-testing)
-- [Security & PII](#-security--pii)
-- [Observability](#-observability)
+- [Security & PII Protection](#-security--pii-protection)
+- [Observability & Cost Tracking](#-observability--cost-tracking)
+- [Long-Term Memory](#-long-term-memory)
 - [Design Decisions](#-design-decisions)
-- [Roadmap](#-roadmap)
+- [Limitations & Future Work](#-limitations--future-work)
 - [License](#-license)
 
 ---
 
 ## 🎯 Overview
 
-**AI Data Analyst Agent** is a production-grade multi-agent system that takes a natural-language question about a CSV dataset and produces a verified analytical report — complete with SQL evidence, auto-generated charts, root cause analysis, and actionable recommendations.
+**AI Data Analyst Agent** is a production-grade, multi-agent system built with LangGraph that transforms natural-language questions into fully verified analytical reports. The system implements a 3-tier agent architecture communicating over Redis Streams, with deterministic grounding verification ensuring zero hallucination in the final output.
 
-**Example prompt:**
-> *"Phân tích file sales.csv, tìm nguyên nhân doanh thu tháng 7 giảm, tạo biểu đồ và đề xuất hướng cải thiện."*
+### Example
 
-The agent doesn't guess — it **plans**, **executes** structured queries, **verifies** every claim against the raw evidence, and only then produces a grounded report. If a claim can't be traced back to a real query result, the deterministic verifier removes it automatically.
+> **Input:** *"Phân tích file sales.csv, tìm nguyên nhân doanh thu tháng 7 giảm, tạo biểu đồ và đề xuất hướng cải thiện."*
+>
+> **Output:** A structured report with:
+> - Revenue trend analysis backed by SQL query evidence
+> - Root cause identification with cited step IDs
+> - Auto-generated Matplotlib charts
+> - Actionable recommendations
+> - Confidence level (high/medium/low)
+> - Every numeric claim verified against raw query metrics (±1% tolerance)
+
+The agent doesn't guess — it **plans**, **executes** structured queries, **critiques** evidence completeness, **verifies** every claim against raw data, and only then produces a grounded report.
 
 ---
 
 ## ✨ Key Features
 
 ### 🏗️ Multi-Agent Architecture (3-Tier)
-- **Orchestrator**: LangGraph StateGraph controlling the full analysis pipeline
-- **Executor Agent**: Per-step execution with local retry, error classification, and tool routing
-- **Tool Agents**: Isolated SQL/Python workers communicating over Redis Streams
+
+| Tier | Agent | Responsibility |
+|------|-------|---------------|
+| **Tier 1** | Orchestrator (LangGraph StateGraph) | Pipeline control, routing, checkpointing |
+| **Tier 2** | Executor Agent (subgraph-as-node) | Per-step execution with local retry & error classification |
+| **Tier 3** | Tool Agents (SQL/Python workers) | Isolated code execution via Redis Streams |
 
 ### 🔍 Deterministic Grounding Verification
 - Every finding and root cause must cite a specific analysis step ID
-- Numeric claims are compared against actual query metrics (1% tolerance)
-- Invalid claims are automatically removed — **zero hallucination in the final report**
+- Numeric claims verified against actual query metrics with 1% tolerance
+- Invalid claims auto-removed — **zero hallucination guarantee in final report**
+- Two retry rounds before fallback sanitization
 
-### 🧪 Evaluation Harness
-- **30 golden test cases** across 9 categories (trend, root cause, outlier, edge case, etc.)
-- Property-based checkers: citations, numeric matches, policy compliance
-- Baseline regression detection with automated reports
+### 🧪 Comprehensive Evaluation Harness
+- **30 golden test cases** across 9 analytical categories
+- Property-based checkers: citation validity, numeric accuracy, policy compliance
+- Baseline regression detection with automated HTML reports
+- Mock mode for CI/CD pipeline integration
 
 ### 🖥️ Production Web UI
 - Dark mode glassmorphism design with real-time pipeline visualization
-- Live SSE streaming showing each agent's progress as it happens
+- Live SSE streaming showing each agent node's progress
 - Drag-and-drop CSV upload or one-click sample datasets
 - Human-in-the-loop modal for clarification questions
+- Full audit log and node metrics display
 
 ### 🔒 Security First
 - PII auto-redaction (email, phone, credit card, SSN, IP) before LLM context
-- Read-only PostgreSQL role for all query execution
-- AST-level policy guard for generated Python code
+- Read-only PostgreSQL role (`executor_ro`) for all query execution
+- AST-level policy guard for generated Python (blocks `os`, `subprocess`, `eval`, etc.)
 - Non-root Docker sandbox on internal-only network for Python execution
 
 ### 📊 Observability & Cost Tracking
-- Per-node latency, token count, and cost estimation
-- LangSmith integration ready (opt-in)
+- Per-node latency, token count, and estimated cost (USD)
+- Model-specific pricing tables (OpenAI, Anthropic, Groq, Gemini)
+- LangSmith integration ready (opt-in via environment variables)
 - Trace ID propagation across Redis Streams boundaries
 
 ### 🧠 Long-Term Memory
-- SQLite-backed memory store persisting past analysis results
-- Automatic context injection into Planner for repeat dataset analysis
+- SQLite-backed memory store persisting past analysis summaries
+- Automatic context injection into Planner for repeat dataset queries
 - TTL-based cleanup for expired records
 
 ---
 
-## 🏛️ Architecture
+## 🏛️ System Architecture
 
 ```
                     ┌─────────────┐
                     │    User     │
+                    │ (Web UI /   │
+                    │  CLI)       │
                     └──────┬──────┘
                            │  question + CSV
                            ▼
                   ┌──────────────────┐
                   │  Planner Node    │◄──── Memory Context (past analyses)
+                  │  (Structured     │
+                  │   Output → Plan) │
                   └────────┬─────────┘
                            │
               ┌────────────┼─────────────┐
@@ -111,15 +134,16 @@ The agent doesn't guess — it **plans**, **executes** structured queries, **ver
               │            │             │
               ▼            │             ▼
     ┌──────────────┐       │     ┌──────────────┐
-    │ HITL: Ask    │       │     │ Direct Answer │
-    │ User         │       │     └──────────────┘
+    │ HITL: Ask    │       │     │ Direct       │
+    │ User (with   │       │     │ Response     │
+    │ interrupt)   │       │     └──────────────┘
     └──────┬───────┘       │
            └───────────────┤
                            ▼
                   ┌──────────────────┐
-                  │ Data Inspector   │ ← PII redaction on sample rows
-                  │ (CSV → PostgreSQL│
-                  │  via COPY)       │
+                  │ Data Inspector   │ ← CSV → PostgreSQL (COPY)
+                  │ (Schema detect,  │ ← PII redaction on sample rows
+                  │  type inference) │
                   └────────┬─────────┘
                            ▼
               ┌─────────────────────────────┐
@@ -127,7 +151,7 @@ The agent doesn't guess — it **plans**, **executes** structured queries, **ver
               │                             │
               │  Tool Router → dispatch via │
               │  Redis Streams:             │
-              │    tasks:sql ↔ SQL Worker   │
+              │    tasks:sql  ↔ SQL Worker  │
               │    tasks:python ↔ Py Worker │
               │                             │
               │  Local retry (max 2) with   │
@@ -137,11 +161,11 @@ The agent doesn't guess — it **plans**, **executes** structured queries, **ver
               ┌──────────────────────┐     ┌──────────────┐
               │ Critic Node          │────►│ Replanner    │──┐
               │ (evidence complete?) │ no  │ (max 3 extra │  │
-              └────────┬─────────────┘     │  SQL goals)  │  │
+              └────────┬─────────────┘     │  goals)      │  │
                   yes  │                   └──────────────┘  │
-                       ▼                          ▲          │
-              ┌──────────────────────┐            │          │
-              │ Chart Planner →      │            └──────────┘
+                       ▼                         ▲          │
+              ┌──────────────────────┐           │          │
+              │ Chart Planner →      │           └──────────┘
               │ Chart Creator        │
               │ (Matplotlib, no LLM) │
               └────────┬─────────────┘
@@ -154,228 +178,218 @@ The agent doesn't guess — it **plans**, **executes** structured queries, **ver
               │ Grounding Verifier   │ ← Deterministic (pure code, no LLM)
               │ • Citation validity  │
               │ • Numeric accuracy   │
+              │ • Step ID existence  │
               └────────┬─────────────┘
               invalid  │  valid
           ┌────────────┴────────┐
           ▼                     ▼
   ┌──────────────┐     ┌──────────────────┐
-  │ Retry /      │     │ Finalize Report  │ → Memory Store (save for future)
+  │ Retry /      │     │ Finalize Report  │ → Memory Store
   │ Sanitize     │     │ → Final Answer   │
   └──────────────┘     └──────────────────┘
 ```
-
-### Communication Boundaries
-
-| Boundary | Transport | Reason |
-|----------|-----------|--------|
-| Orchestrator ↔ Executor Agent | In-process (subgraph-as-node) | Low latency, shared checkpoints |
-| Executor Agent ↔ Tool Agent | **Redis Streams** | Independent scaling, crash isolation |
-| Tool Agent ↔ PostgreSQL | `executor_ro` role | Read-only enforcement at DB level |
-| Python Sandbox ↔ Network | Docker internal network only | No public internet access |
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| **Orchestration** | LangGraph StateGraph with SQLite checkpoints |
-| **LLM Providers** | OpenAI (GPT-4.1, GPT-4.1-mini, GPT-4o) / Anthropic (Claude Sonnet, Haiku) |
-| **Message Bus** | Redis Streams with consumer groups & visibility timeout |
-| **Database** | PostgreSQL 16 (CSV ingestion via COPY, role-based access control) |
-| **Web API** | FastAPI with Server-Sent Events (SSE) streaming |
-| **Frontend** | Vanilla HTML/CSS/JS — dark mode, glassmorphism, Inter + JetBrains Mono |
-| **Charts** | Matplotlib (deterministic rendering from structured specs — no LLM code) |
-| **Python Sandbox** | Docker container (non-root, read-only, internal network, AST policy guard) |
-| **Memory** | SQLite with dataset-hash indexing and TTL cleanup |
-| **Eval** | Property-based golden dataset harness (30 test cases, 9 categories) |
-| **Testing** | pytest (114 unit tests), ruff, mypy |
-| **Package Manager** | uv (with lockfile) |
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| **Orchestration** | LangGraph StateGraph + SQLite Checkpoints | Stateful multi-agent pipeline with interrupt/resume |
+| **LLM Providers** | Groq (gpt-oss-20b/120b), OpenAI, Anthropic, Gemini | Multi-provider support with structured output |
+| **Message Bus** | Redis 7 Streams with Consumer Groups | Cross-process tool agent communication |
+| **Database** | PostgreSQL 16 | CSV ingestion (COPY), role-based access control |
+| **Web API** | FastAPI + SSE Streaming | Real-time progress updates via Server-Sent Events |
+| **Frontend** | Vanilla HTML/CSS/JS | Dark mode, glassmorphism, Inter + JetBrains Mono |
+| **Charts** | Matplotlib | Deterministic rendering from structured specs (no LLM) |
+| **Python Sandbox** | Docker (non-root, read-only, internal network) | Isolated code execution with AST policy guard |
+| **Memory** | SQLite | Dataset-hash indexed, TTL-based cleanup |
+| **Evaluation** | Property-based golden dataset harness | 30 test cases, 9 categories, baseline regression |
+| **Testing** | pytest (116 unit tests), ruff, mypy strict | Full type safety and lint compliance |
+| **Package Manager** | uv (with lockfile) | Reproducible dependency resolution |
 
 ---
 
 ## 📦 Prerequisites
 
-- **Python 3.11+**
-- **Docker** with Docker Compose
-- **uv** (recommended) or pip
-- **conda** (optional, for environment isolation)
-- An **OpenAI** or **Anthropic** API key
+| Requirement | Version | Purpose |
+|-------------|---------|---------|
+| Python | 3.11+ | Runtime |
+| Docker + Docker Compose | Latest | PostgreSQL, Redis, Python sandbox |
+| uv | Latest | Python package manager |
+| LLM API Key | Any supported provider | Groq (recommended), OpenAI, Anthropic, or Gemini |
 
 ---
 
 ## 🚀 Installation & Setup
 
-### 1. Clone the repository
+### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/maitungdeptraiiiii/AI-Data-Analyst-Agent.git
+git clone https://github.com/your-username/AI-Data-Analyst-Agent.git
 cd AI-Data-Analyst-Agent
 ```
 
-### 2. Create a Python environment
+### 2. Create Python Environment
 
-**Option A — Using conda (recommended):**
 ```bash
+# Using conda (recommended)
 conda create -n data_analyst_agent python=3.11 -y
 conda activate data_analyst_agent
-pip install uv
+
+# Or using uv
+uv venv
+source .venv/bin/activate
 ```
 
-**Option B — Using venv:**
-```bash
-python -m venv .venv
-source .venv/bin/activate   # Linux/Mac
-pip install uv
-```
-
-### 3. Install dependencies
+### 3. Install Dependencies
 
 ```bash
-uv sync --dev
+# Using pip (editable mode)
+pip install -e ".[dev]"
+
+# Or using uv
+uv sync
 ```
 
-### 4. Start infrastructure services
+### 4. Start Infrastructure Services
 
 ```bash
 docker compose up -d
 ```
 
 This starts:
-- **PostgreSQL 16** on port `5433` (with read-only `executor_ro` and read-write `ingest_rw` roles auto-created)
+- **PostgreSQL 16** on port `5433` (with `analyst_admin` user, `analyst` database)
 - **Redis 7** on port `6379`
 
-### 5. Configure environment
+Verify services are healthy:
+
+```bash
+docker compose ps
+# Both should show "healthy" status
+```
+
+### 5. Initialize Database Roles
+
+The database roles are auto-created via `init/01-roles.sql` on first launch:
+- `ingest_rw` — read-write role for CSV ingestion
+- `executor_ro` — read-only role for query execution (security boundary)
+
+### 6. Configure Environment
 
 ```bash
 cp .env.example .env
-```
-
-Edit `.env` and set your API key (see [Configuration](#-configuration) below).
-
-### 6. (Optional) Build Python sandbox
-
-Only needed if you want to run Python-routed analysis:
-
-```bash
-docker compose --profile sandbox-build build python-sandbox
+# Edit .env with your API keys (see Configuration section)
 ```
 
 ---
 
 ## ⚙️ Configuration
 
-### `.env` — Required Settings
+### Required Environment Variables
 
-```dotenv
-# ===== LLM Provider (choose one) =====
+```ini
+# === LLM Provider (choose one) ===
+LLM_PROVIDER=groq                # Options: groq, openai, anthropic, gemini
+GROQ_API_KEY=gsk_your_key_here   # Required if LLM_PROVIDER=groq
 
-# Option 1: OpenAI
-LLM_PROVIDER=openai
-OPENAI_API_KEY=sk-proj-your-key-here
-PLANNER_MODEL=gpt-4.1-mini
-EXECUTOR_MODEL=gpt-4.1-mini
-CRITIC_MODEL=gpt-4.1-mini
-REPORTER_MODEL=gpt-4.1-mini
+# === Model Configuration ===
+PLANNER_MODEL=openai/gpt-oss-20b     # Groq model for planning
+EXECUTOR_MODEL=openai/gpt-oss-20b    # Groq model for SQL/Python generation
+CRITIC_MODEL=openai/gpt-oss-20b      # Groq model for evidence review
+REPORTER_MODEL=openai/gpt-oss-20b    # Groq model for report generation
 
-# Option 2: Anthropic
-# LLM_PROVIDER=anthropic
-# ANTHROPIC_API_KEY=sk-ant-your-key-here
-# PLANNER_MODEL=claude-sonnet-5
-# EXECUTOR_MODEL=claude-sonnet-5
-# CRITIC_MODEL=claude-sonnet-5
-# REPORTER_MODEL=claude-sonnet-5
-```
-
-### `.env` — Infrastructure (defaults match `docker-compose.yml`)
-
-```dotenv
+# === Infrastructure ===
 POSTGRES_INGEST_DSN=postgresql://ingest_rw:ingest_dev_password@localhost:5433/analyst
 POSTGRES_EXECUTOR_DSN=postgresql://executor_ro:executor_dev_password@localhost:5433/analyst
 REDIS_URL=redis://localhost:6379/0
-```
 
-### `.env` — Optional Settings
-
-```dotenv
-# Observability
-OBSERVABILITY_BACKEND=local          # "local" | "langsmith" | "none"
-LANGSMITH_API_KEY=lsv2_pt_xxx        # Only needed if backend=langsmith
-LANGSMITH_PROJECT=ai-data-analyst-agent
-
-# Timeouts & Limits
+# === Optional ===
 LLM_TIMEOUT_SECONDS=60
-TOOL_AGENT_WAIT_TIMEOUT_SECONDS=30
-TOOL_AGENT_VISIBILITY_TIMEOUT_MS=30000
-
-# Sandbox
-PYTHON_SANDBOX_IMAGE=analyst-python-sandbox:phase6
-PYTHON_SANDBOX_TIMEOUT_SECONDS=15
-PYTHON_SANDBOX_MEMORY=512m
-PYTHON_MAX_DATASET_ROWS=100000
+ARTIFACTS_DIR=artifacts
+CHECKPOINT_DB_PATH=data/checkpoints.sqlite
 ```
 
-> ⚠️ **Note**: Only the selected provider's API key is required. Do not commit `.env` to Git.
+### Alternative LLM Providers
 
-> 💡 **Model recommendation**: Fast, non-reasoning models (e.g. `gpt-4.1-mini`, `claude-sonnet-5`) are ideal for this workload. Reasoning-heavy models like `gpt-5` may cause timeouts due to long processing times on structured output prompts.
+```ini
+# OpenAI
+LLM_PROVIDER=openai
+OPENAI_API_KEY=sk-...
+PLANNER_MODEL=gpt-4.1-mini
+
+# Anthropic
+LLM_PROVIDER=anthropic
+ANTHROPIC_API_KEY=sk-ant-...
+PLANNER_MODEL=claude-sonnet-4-20250514
+
+# Google Gemini
+LLM_PROVIDER=gemini
+GEMINI_API_KEY=AIza...
+PLANNER_MODEL=gemini-2.5-flash
+```
 
 ---
 
-## 🎮 Usage
+## 📖 Usage
 
 ### 1. Web UI (Recommended)
 
-Start the Tool Worker and Web Server in separate terminals:
+Start the two required processes:
 
 ```bash
-# Terminal 1 — Start the SQL Tool Worker
+# Terminal 1: Start the SQL Tool Worker
 python -m analyst_agent.workers.tool_worker sql
 
-# Terminal 2 — Start the Web API & UI
+# Terminal 2: Start the Web API server
 python -m analyst_agent.api.cli --port 8002
 ```
 
-Open your browser at: **http://127.0.0.1:8002/**
+Open **http://127.0.0.1:8002/** in your browser.
 
-**Web UI Features:**
-- 📁 Drag-and-drop CSV upload or select from sample datasets
-- 💬 Type your analysis question in natural language
-- ⚡ Watch the pipeline execute in real-time with animated node progress
-- 📊 View auto-generated charts and verified reports
-- 🔄 Respond to clarification questions via interactive modal
-- ⏱️ Live timer, token counter, and cost estimator
+**Features:**
+- Select a sample dataset or drag-and-drop your own CSV
+- Type an analysis question in any language
+- Watch the pipeline execute in real-time via SSE streaming
+- View the verified report with charts, findings, and citations
+- Resume interrupted analyses after providing clarification
 
 ### 2. Command Line Interface
 
 ```bash
-# Start analysis
-python -m analyst_agent.cli start data/sample_sales.csv \
-  "Phân tích nguyên nhân doanh thu tháng 7 giảm"
+# Start a new analysis
+analyst-agent start data/sample_sales.csv "Analyze revenue trends by region"
 
-# If the agent pauses for clarification, resume with:
-python -m analyst_agent.cli resume THREAD_ID "Năm 2026"
+# Resume after clarification
+analyst-agent resume <thread-id> "I mean North and South regions only"
 ```
-
-> **Important**: The SQL Tool Worker must be running in a separate terminal for CLI usage as well.
 
 ### 3. Evaluation Harness
 
-Run the 30-case golden dataset evaluation:
-
 ```bash
-# Mock mode (fast validation, no LLM calls)
+# Run with mock LLM (fast, for CI/CD)
 python -m eval.eval_runner --mock
 
-# Full evaluation (requires LLM API key)
+# Run with live LLM (requires API key)
 python -m eval.eval_runner
+
+# View generated report
+cat eval/results/report.html
 ```
 
-**Evaluation output:**
-```
-Evaluation Complete! Total: 30, Passed: 28, Pass Rate: 93.33%
-```
+The evaluation harness tests 30 golden cases across 9 categories:
 
-Results are saved to `eval/results/` with detailed per-case breakdown and baseline regression comparison.
+| Category | Description | Test Cases |
+|----------|-------------|-----------|
+| `trend` | Time series and trend detection | 5 |
+| `comparison` | Group comparisons and rankings | 4 |
+| `root_cause` | Root cause analysis | 3 |
+| `outlier` | Anomaly and outlier detection | 3 |
+| `correlation` | Variable correlation analysis | 3 |
+| `breakdown` | Dimensional breakdown | 3 |
+| `forecast` | Projections and forecasting | 3 |
+| `edge_case` | Null handling, empty data, ambiguity | 3 |
+| `policy` | Off-topic rejection, PII compliance | 3 |
 
 ---
 
@@ -383,296 +397,338 @@ Results are saved to `eval/results/` with detailed per-case breakdown and baseli
 
 ```
 AI-Data-Analyst-Agent/
-│
-├── src/analyst_agent/                 # Main application package
-│   ├── config.py                      # Pydantic Settings (.env loading)
-│   ├── graph.py                       # LangGraph StateGraph orchestration
-│   ├── state.py                       # State schemas (AgentState, ToolTaskData, etc.)
-│   ├── schemas.py                     # Pydantic models (PlannerOutput, FinalReport, etc.)
-│   ├── llm.py                         # LLM factory (OpenAI/Anthropic, model tiering)
-│   ├── database.py                    # CSV → PostgreSQL ingestion via COPY
-│   ├── grounding.py                   # Deterministic grounding verification
-│   ├── observability.py               # Token tracking, cost estimation, tracing
-│   ├── pii.py                         # PII detection & redaction engine
-│   ├── charts.py                      # Matplotlib chart rendering
-│   ├── checkpointing.py              # SQLite checkpoint configuration
-│   ├── cli.py                         # CLI entry point (start/resume)
-│   ├── context.py                     # Clarification history formatting
-│   ├── errors.py                      # Error classification & retry logic
-│   ├── python_guard.py                # AST policy guard for generated Python
-│   ├── sandbox.py                     # Docker sandbox execution
-│   ├── serialization.py               # JSON-safe serialization utilities
-│   ├── streams.py                     # Redis Streams producer/consumer
-│   │
-│   ├── nodes/                         # Pipeline nodes
-│   │   ├── planner.py                 # Plan generation (structured output)
-│   │   ├── data_inspector.py          # Schema discovery + sample rows
-│   │   ├── executor_agent.py          # Per-step execution subgraph
-│   │   ├── tool_router.py             # SQL vs Python routing logic
-│   │   ├── critic.py                  # Evidence completeness checker
-│   │   ├── replan.py                  # Additional SQL goals on evidence gaps
-│   │   ├── chart_planner.py           # Chart specification generator
-│   │   ├── chart_creator.py           # Matplotlib rendering (no LLM code)
-│   │   ├── reporter.py               # Structured report with citations
-│   │   ├── grounding_verifier.py      # Citation + numeric claim verification
-│   │   ├── ask_user.py                # Human-in-the-loop interrupt
-│   │   └── tool_agents/               # SQL & Python tool agent implementations
-│   │
-│   ├── tools/                         # Tool implementations (SQL executor, etc.)
-│   ├── workers/                       # Redis Streams consumer workers
-│   │
-│   ├── api/                           # FastAPI web backend
-│   │   ├── app.py                     # Application factory (CORS, lifespan)
-│   │   ├── cli.py                     # Web server CLI entry point
-│   │   ├── models.py                  # Pydantic request/response models
+├── src/analyst_agent/           # Main source package
+│   ├── api/                     # FastAPI application
+│   │   ├── app.py               # FastAPI app factory with CORS
+│   │   ├── cli.py               # uvicorn entry point
+│   │   ├── models.py            # Pydantic request/response models
 │   │   └── routes/
-│   │       └── analysis.py            # Analysis CRUD + SSE streaming endpoints
+│   │       └── analysis.py      # /api/analysis/* endpoints + SSE streaming
 │   │
-│   ├── static/                        # Web UI frontend (SPA)
-│   │   ├── index.html                 # HTML structure
-│   │   ├── style.css                  # Dark mode, glassmorphism design system
-│   │   └── app.js                     # JavaScript logic + EventSource SSE
+│   ├── nodes/                   # LangGraph node implementations
+│   │   ├── planner.py           # Intent classification + plan generation
+│   │   ├── data_inspector.py    # CSV → PostgreSQL ingestion & schema detection
+│   │   ├── executor_agent.py    # Step executor (subgraph-as-node)
+│   │   ├── critic.py            # Evidence completeness reviewer
+│   │   ├── replan.py            # Additional plan generation after critic retry
+│   │   ├── chart_planner.py     # Chart spec generation (LLM-based)
+│   │   ├── chart_creator.py     # Matplotlib rendering (deterministic)
+│   │   ├── reporter.py          # Structured report generation with citations
+│   │   ├── grounding_verifier.py# Deterministic grounding verification
+│   │   ├── ask_user.py          # Human-in-the-loop interrupt
+│   │   ├── tool_router.py       # Keyword-based SQL/Python routing
+│   │   └── tool_agents/
+│   │       ├── sql_agent.py     # SQL generation & repair subgraph
+│   │       └── python_agent.py  # Python generation & repair subgraph
 │   │
-│   └── memory/                        # Long-term memory store
-│       ├── schemas.py                 # AnalysisRecord model
-│       ├── store.py                   # SQLite CRUD + TTL cleanup
-│       └── retriever.py              # Memory retrieval + prompt augmentation
+│   ├── memory/                  # Long-term memory system
+│   │   ├── store.py             # SQLite-backed memory store with TTL
+│   │   └── retriever.py         # Context retrieval for planner injection
+│   │
+│   ├── workers/
+│   │   └── tool_worker.py       # Redis Streams consumer worker
+│   │
+│   ├── static/                  # Web UI (HTML/CSS/JS SPA)
+│   │   ├── index.html           # Main page
+│   │   ├── style.css            # Dark mode glassmorphism design
+│   │   └── app.js               # SSE client + pipeline visualizer
+│   │
+│   ├── tools/
+│   │   └── sql_tool.py          # Read-only SQL execution via psycopg
+│   │
+│   ├── config.py                # Pydantic Settings (multi-provider)
+│   ├── graph.py                 # LangGraph StateGraph definition
+│   ├── state.py                 # TypedDict state schemas (Agent, Executor, Tool)
+│   ├── schemas.py               # Pydantic structured output schemas
+│   ├── llm.py                   # Multi-provider LLM factory
+│   ├── cli.py                   # CLI entry point
+│   ├── streams.py               # Redis Streams publish/subscribe/reclaim
+│   ├── database.py              # PostgreSQL connection + CSV ingestion
+│   ├── sandbox.py               # Docker sandbox execution
+│   ├── charts.py                # Matplotlib chart rendering
+│   ├── grounding.py             # Deterministic grounding verification logic
+│   ├── pii.py                   # PII regex redaction
+│   ├── python_guard.py          # AST-level Python policy guard
+│   ├── errors.py                # Structured error classification
+│   ├── serialization.py         # Metric extraction from query results
+│   ├── context.py               # Clarification history formatting
+│   ├── checkpointing.py         # SQLite checkpointer factory
+│   └── observability.py         # Token counting & cost estimation
 │
-├── eval/                              # Evaluation harness
-│   ├── golden_dataset.json            # 30 test cases across 9 categories
-│   ├── eval_checks.py                 # Property-based checkers
-│   ├── eval_runner.py                 # Evaluation CLI & runner
-│   ├── eval_report.py                 # Summary generation & baseline comparison
-│   ├── baselines/                     # Baseline metrics for regression detection
-│   └── datasets/                      # Sample datasets
-│       ├── superstore_sales.csv       # Multi-category retail dataset (21 rows)
-│       └── edge_case_nulls.csv        # Null/mixed-format edge cases
+├── eval/                        # Evaluation framework
+│   ├── golden_dataset.json      # 30 golden test cases
+│   ├── eval_runner.py           # Evaluation orchestrator
+│   ├── eval_checks.py           # Property-based evaluation checkers
+│   ├── eval_report.py           # HTML report generator
+│   ├── datasets/                # Evaluation CSV datasets
+│   ├── baselines/               # Baseline result snapshots
+│   └── results/                 # Generated evaluation reports
 │
-├── tests/                             # Unit test suites (114 tests)
-│   ├── test_phase1.py                 # Config, state, LLM factory
-│   ├── test_phase2.py                 # Database ingestion
-│   ├── test_phase3.py                 # Planner structured output
-│   ├── test_phase4.py                 # Executor, error classification, retry
-│   ├── test_phase5.py                 # Critic & replanning
-│   ├── test_phase6.py                 # Python sandbox & AST guard
-│   ├── test_phase7.py                 # Reporter & chart pipeline
-│   ├── test_phase8.py                 # Grounding verifier & HITL
-│   ├── test_phase8b.py                # Redis Streams & tool workers
-│   ├── test_phase9.py                 # Observability & cost tracking
-│   ├── test_phase10.py                # Evaluation harness
-│   ├── test_phase11.py                # PII redaction & FastAPI endpoints
-│   └── test_phase12.py                # Long-term memory store
+├── tests/                       # Test suite (116 tests)
+│   ├── test_phase1.py           # Config, Settings, LLM factory
+│   ├── test_phase2.py           # Planner node
+│   ├── test_phase3.py           # Data Inspector + SQL execution
+│   ├── test_phase4.py           # Executor Agent + Tool routing
+│   ├── test_phase5.py           # Critic node
+│   ├── test_phase6.py           # Python sandbox + security guard
+│   ├── test_phase7.py           # Chart planning + rendering
+│   ├── test_phase8.py           # Reporter + grounding verification
+│   ├── test_phase8b.py          # Full graph integration
+│   ├── test_phase9.py           # Observability + cost tracking
+│   ├── test_phase10.py          # Evaluation harness + golden dataset
+│   ├── test_phase11.py          # Web API + SSE + PII redaction
+│   └── test_phase12.py          # Long-term memory store
 │
-├── init/                              # Database initialization SQL
-│   └── 01-roles.sql                   # PostgreSQL role creation
+├── init/
+│   └── 01-roles.sql             # PostgreSQL role initialization
 │
-├── sandbox/                           # Docker sandbox build context
-├── data/                              # Runtime data (checkpoints, memory DB)
+├── sandbox/
+│   └── Dockerfile               # Python sandbox Docker image
 │
-├── docker-compose.yml                 # PostgreSQL + Redis + Python sandbox
-├── pyproject.toml                     # Project metadata & dependencies
-├── uv.lock                            # Deterministic dependency lockfile
-├── .env.example                       # Environment template
-└── PROJECT_DESIGN.md                  # Detailed architecture design document
+├── data/                        # Runtime data (sample CSVs, SQLite DBs)
+├── artifacts/                   # Generated charts and reports
+├── docker-compose.yml           # PostgreSQL + Redis + sandbox
+├── pyproject.toml               # Project metadata & dependencies
+├── .env.example                 # Environment variable template
+└── PROJECT_DESIGN.md            # Detailed design specification
 ```
 
 ---
 
 ## 🔬 Pipeline Deep Dive
 
-### Phase 1 — Planner
+### Phase 1: Planning
+The **Planner Node** receives the user's question and dataset path, retrieves relevant past analyses from memory, and produces a structured plan using LLM structured output (`PlannerOutput` schema). The plan consists of ordered, plain-English analytical goals.
 
-The Planner classifies the user request as `ready`, `need_clarification`, or `off_topic`. When `ready`, it produces an ordered list of analytical goals in plain English (never referencing column names — it doesn't know the schema yet). The Planner also receives **memory context** from past analyses on the same dataset.
+### Phase 2: Data Inspection
+The **Data Inspector** ingests the CSV into PostgreSQL via `COPY` protocol, detects column types, counts nulls, and extracts sample rows (with PII redaction). This metadata becomes the dataset schema for all downstream nodes.
 
-### Phase 2 — Data Inspector
+### Phase 3: Execution
+The **Executor Agent** (a subgraph-as-node) processes each plan step:
+1. **Tool Router** selects SQL or Python based on step keywords
+2. **Dispatch** publishes a task to `tasks:{tool}` Redis Stream
+3. **Tool Worker** (separate process) consumes the task, generates code via LLM, executes it, and publishes the result to `results:{correlation_id}`
+4. **Retry** on failure with structured error classification (up to 2 retries per step)
 
-Loads the CSV into PostgreSQL via `COPY`, discovers schema/dtypes/null distribution, and extracts PII-redacted sample rows. All sample data passes through the PII redaction engine before entering the LLM context.
+### Phase 4: Critique
+The **Critic Node** reviews all evidence and determines if it's sufficient to answer the original question. If insufficient, it requests up to 2 additional rounds of analysis via the **Replanner**.
 
-### Phase 3 — Executor Agent
+### Phase 5: Visualization
+The **Chart Planner** uses LLM to select the best chart type and columns from available evidence. The **Chart Creator** renders deterministic Matplotlib charts from the structured spec (no LLM involvement in rendering).
 
-For each plan step, the Executor Agent:
-1. **Routes** to SQL or Python based on keywords (default: SQL)
-2. **Dispatches** the task over Redis Streams to an isolated Tool Worker
-3. **Handles** errors with structured LLM repair (max 2 retries per step)
-4. **Records** results as `AnalysisStep` with code, metrics, and success status
+### Phase 6: Reporting
+The **Reporter Node** generates a structured `FinalReport` with:
+- Summary, key findings (with citations), root causes (with citations)
+- Numeric claims with step ID references
+- Recommendations, confidence level, limitations
 
-### Phase 4 — Critic & Replanner
+### Phase 7: Grounding Verification
+The **Grounding Verifier** (pure Python, no LLM) validates every claim:
+- All citation step IDs must reference successful analysis steps
+- No duplicate citations
+- Numeric claims must match actual query metrics within ±1% tolerance
+- Invalid claims are removed; the reporter retries or sanitizes
 
-The Critic checks whether collected evidence is sufficient to answer the original question. If gaps exist, a Replanner produces up to 3 additional SQL-only analysis goals. The Critic loop caps at 2 improvement rounds.
+---
 
-### Phase 5 — Chart Generation
+## 🔗 Multi-Agent Communication
 
-A Chart Planner selects the most impactful analysis step and produces a structured chart specification. Deterministic Matplotlib code renders the chart — **no LLM-generated Python is executed** for visualization. Chart failure is non-fatal.
+| Boundary | Transport | Latency | Isolation |
+|----------|-----------|---------|-----------|
+| Orchestrator ↔ Executor Agent | In-process (subgraph-as-node) | ~0ms | Shared checkpoints |
+| Executor Agent ↔ Tool Agent | **Redis Streams** | ~5ms | Full process isolation |
+| Tool Agent ↔ PostgreSQL | TCP (psycopg) | ~1ms | Read-only DB role |
+| Python Sandbox ↔ Network | Docker internal network | N/A | No public internet |
 
-### Phase 6 — Reporter
+### Redis Streams Protocol
 
-Produces a structured `FinalReport` with:
-- Summary narrative
-- Key findings (each citing a step ID + metric)
-- Root causes (each citing a step ID + metric)
-- Recommendations
-- Limitations & confidence level
+```
+Executor Agent                     Tool Worker
+     │                                  │
+     │── XADD tasks:sql ──────────────► │  (publish task)
+     │                                  │
+     │                                  │── Execute SQL
+     │                                  │── XADD results:{id}
+     │                                  │
+     │◄── XREAD results:{id} ──────────│  (await result)
+     │                                  │
+     │── XACK tasks:sql ──────────────► │  (acknowledge)
+```
 
-### Phase 7 — Grounding Verifier
-
-A **pure-code, deterministic** verifier (no LLM involved):
-- Checks every cited `step_id` exists and was successful
-- Compares every numeric claim against the actual metric value (1% tolerance)
-- Invalid claims → correction round (max 2) or automatic removal
-- Confidence is lowered if sanitization was required
-
-### Phase 8 — Finalize & Memory
-
-The verified report is formatted for output. The analysis record is saved to the Memory Store for future reference when the same dataset is analyzed again.
+Features:
+- **Consumer Groups** for horizontal scaling of workers
+- **Visibility Timeout** (30s) for stuck task reclamation via `XAUTOCLAIM`
+- **Correlation ID** namespaced by `run_id` to prevent cross-run collisions
 
 ---
 
 ## 🧪 Testing
 
+### Running Tests
+
 ```bash
-# Run all 114 unit tests (excludes integration tests)
-pytest -m "not integration and not sandbox_integration"
+# Run all unit tests (116 tests)
+pytest tests/ -m "not integration and not sandbox_integration"
 
-# Run integration tests (requires PostgreSQL container)
-pytest -m integration
+# Run with verbose output
+pytest tests/ -v -m "not integration and not sandbox_integration"
 
-# Run sandbox integration tests (requires built sandbox image + PostgreSQL)
-pytest -m sandbox_integration
+# Run a specific phase
+pytest tests/test_phase8.py -v
 
-# Linter
+# Lint check
 ruff check src tests eval
 
-# Type checker
+# Type check (strict mode)
 mypy src
-```
-
-**Current test results:**
-```
-114 passed, 5 deselected in 3.45s
-mypy: Success — no issues found in 48 source files
-ruff: All checks passed
 ```
 
 ### Test Coverage by Phase
 
-| Phase | Tests | Description |
-|-------|-------|-------------|
-| 1 | 17 | Config, state schemas, LLM factory |
-| 2 | 5 | CSV ingestion, PostgreSQL COPY |
-| 3 | 5 | Planner structured output |
-| 4 | 12 | Executor, error classification, retry |
-| 5 | 3 | Critic & replan logic |
-| 6 | 9 | Python guard, sandbox, tool router |
-| 7 | 10 | Reporter, charts, structured output |
-| 8 | 12 | Grounding verifier, HITL |
-| 8b | 11 | Redis Streams, consumer groups, workers |
-| 9 | 8 | Observability, token tracking, cost |
-| 10 | 7 | Eval harness, golden dataset, baselines |
-| 11 | 10 | PII redaction, FastAPI endpoints |
-| 12 | 5 | Memory store, retriever, integration |
+| Phase | File | Tests | Covers |
+|-------|------|-------|--------|
+| 1 | `test_phase1.py` | 19 | Config, Settings, LLM factory, Groq provider |
+| 2 | `test_phase2.py` | 5 | Planner node, structured output, routing |
+| 3 | `test_phase3.py` | 5 | Data Inspector, CSV ingestion, SQL execution |
+| 4 | `test_phase4.py` | 12 | Executor Agent, tool routing, Redis Streams |
+| 5 | `test_phase5.py` | 3 | Critic node, verdict routing |
+| 6 | `test_phase6.py` | 9 | Python sandbox, AST policy guard |
+| 7 | `test_phase7.py` | 10 | Chart planner, Matplotlib renderer |
+| 8 | `test_phase8.py` | 12 | Reporter, grounding verifier, sanitization |
+| 8b | `test_phase8b.py` | 11 | Full graph integration, interrupt/resume |
+| 9 | `test_phase9.py` | 8 | Observability, token counting, cost estimation |
+| 10 | `test_phase10.py` | 7 | Evaluation harness, golden dataset, reports |
+| 11 | `test_phase11.py` | 10 | Web API, SSE streaming, PII redaction, CORS |
+| 12 | `test_phase12.py` | 5 | Memory store, retriever, TTL cleanup |
+| **Total** | | **116** | |
+
+### Quality Assurance
+
+- **ruff** — Linting with rules: E, F, I, UP, B (100% clean)
+- **mypy strict** — Full type checking across 48 source files (0 errors)
+- **ruff format** — Consistent code formatting
 
 ---
 
-## 🔐 Security & PII
+## 🔒 Security & PII Protection
 
-### PII Redaction
+### Data Protection Layers
 
-The PII engine (`src/analyst_agent/pii.py`) automatically detects and masks:
-- 📧 Email addresses → `[EMAIL_REDACTED]`
-- 📱 Phone numbers (Vietnamese & international) → `[PHONE_REDACTED]`
-- 💳 Credit card numbers → `[CARD_REDACTED]`
-- 🆔 SSN / National ID → `[SSN_REDACTED]`
-- 🌐 IP addresses → `[IP_REDACTED]`
+| Layer | Mechanism | Scope |
+|-------|-----------|-------|
+| **PII Redaction** | Regex patterns for email, phone, credit card, SSN, IP | Applied before any data reaches LLM context |
+| **SQL Isolation** | `executor_ro` PostgreSQL role (read-only) | Prevents INSERT, UPDATE, DELETE, DROP |
+| **Python Guard** | AST-level import/call blocking | Blocks `os`, `subprocess`, `eval`, `exec`, `open`, etc. |
+| **Docker Sandbox** | Non-root, read-only filesystem, internal network | No public internet, no host filesystem access |
+| **Input Validation** | Pydantic models, file extension checks | Only `.csv` files accepted via upload |
+| **Path Traversal** | `os.path.basename()` + boundary checks | Prevents directory traversal in uploads/charts |
 
-Redaction happens **before** data enters the LLM context (during `inspect_dataset`).
+### PII Patterns Redacted
 
-### Database Security
-
-- **`ingest_rw`**: Can only create and load temporary dataset tables
-- **`executor_ro`**: Read-only transactions enforced by PostgreSQL. 10-second statement timeout.
-- Roles are created during PostgreSQL initialization (`init/01-roles.sql`)
-
-### Python Sandbox
-
-- Non-root Docker container on an internal-only network
-- AST policy guard blocks `import os`, `subprocess`, `eval`, `exec`, etc.
-- Memory limit: 512MB, CPU limit: 1 core, timeout: 15 seconds
-- Can access PostgreSQL via `executor_ro` but has no public internet route
+| Type | Example Input | Redacted Output |
+|------|---------------|-----------------|
+| Email | `user@example.com` | `[EMAIL_REDACTED]` |
+| Phone | `+1-555-123-4567` | `[PHONE_REDACTED]` |
+| Credit Card | `4111-1111-1111-1111` | `[CREDIT_CARD_REDACTED]` |
+| SSN | `123-45-6789` | `[SSN_REDACTED]` |
+| IP Address | `192.168.1.1` | `[IP_REDACTED]` |
 
 ---
 
-## 📈 Observability
+## 📊 Observability & Cost Tracking
 
-### Local Mode (Default)
+### Per-Node Metrics
 
-Every node execution automatically tracks:
-- **Duration** (milliseconds)
-- **Token count** (input, output, total)
-- **Estimated cost** (USD, based on model pricing matrix)
+Every LangGraph node emits:
+- **`duration_ms`** — Execution latency
+- **`tokens_in` / `tokens_out`** — Token consumption
+- **`estimated_cost_usd`** — Cost based on model-specific pricing
+- **`model`** — Which LLM model was used
+- **`timestamp`** — Unix timestamp
 
-Metrics are stored in `node_metrics` within the agent state and displayed live in the Web UI.
+### Supported Pricing Models
 
-### LangSmith Mode (Opt-in)
+| Provider | Models |
+|----------|--------|
+| **Groq** | `openai/gpt-oss-20b`, `openai/gpt-oss-120b` |
+| **OpenAI** | `gpt-4.1-mini`, `gpt-4.1`, `gpt-4o`, `gpt-4o-mini` |
+| **Anthropic** | `claude-sonnet-4-*`, `claude-haiku-3-*` |
+| **Gemini** | `gemini-2.5-flash`, `gemini-2.5-pro` |
 
-```dotenv
-OBSERVABILITY_BACKEND=langsmith
-LANGSMITH_API_KEY=lsv2_pt_xxx
-LANGSMITH_PROJECT=ai-data-analyst-agent
+---
+
+## 🧠 Long-Term Memory
+
+The memory system stores past analysis summaries keyed by dataset content hash:
+
+```
+┌──────────────────┐     ┌──────────────────┐     ┌──────────────────┐
+│  Planner Node    │────►│ Memory Retriever │────►│  SQLite Store    │
+│  (receives past  │     │ (lookup by       │     │  data/memory.db  │
+│   context)       │     │  dataset hash)   │     │                  │
+└──────────────────┘     └──────────────────┘     └──────────────────┘
+         ▲                                                │
+         │                                                │
+         └── Memory context injected ─────────────────────┘
 ```
 
-Enables full trace visualization in the LangSmith dashboard with per-node latency breakdowns.
-
-### Cost Estimation
-
-Built-in pricing matrix (per 1M tokens):
-
-| Model | Input | Output |
-|-------|-------|--------|
-| GPT-4.1 | $2.00 | $8.00 |
-| GPT-4.1-mini | $0.40 | $1.60 |
-| GPT-4o | $2.50 | $10.00 |
-| Claude Sonnet 5 | $3.00 | $15.00 |
-| Claude Haiku | $0.25 | $1.25 |
+- **Storage:** SQLite with `dataset_hash`, `question`, `summary`, `created_at`, `expires_at`
+- **Retrieval:** Top-5 most recent analyses for the same dataset
+- **Cleanup:** TTL-based expiration (configurable, default 30 days)
 
 ---
 
-## 🎨 Design Decisions
+## 💡 Design Decisions
 
-1. **Deterministic Grounding over LLM Self-Eval**: The grounding verifier is pure Python code, not an LLM — it cannot be fooled or hallucinate. Claims that don't trace back to real query results are removed automatically.
+### Why LangGraph over raw LangChain?
+LangGraph provides first-class support for stateful, multi-step agent workflows with:
+- Built-in checkpointing for interrupt/resume (human-in-the-loop)
+- Conditional routing between nodes
+- Subgraph-as-node composition for the Executor Agent
 
-2. **3-Tier Agent Hierarchy**: Orchestrator → Executor Agent → Tool Agent. Each tier has its own state schema and communicates via structured messages, not shared mutable state.
+### Why Redis Streams instead of direct function calls?
+- **Crash isolation:** A failing Tool Agent worker doesn't crash the Orchestrator
+- **Horizontal scaling:** Multiple workers can consume from the same stream
+- **Visibility timeout:** Stuck tasks are automatically reclaimed by other workers
+- **Observability:** Every task is a Redis entry with full audit trail
 
-3. **Redis Streams for Tool Agents Only**: The Executor ↔ Tool Agent boundary is the only place where a hung/slow agent needs its own process. Everything else stays in-process for simplicity and checkpoint coherence.
+### Why deterministic grounding instead of LLM self-check?
+- LLMs can't reliably detect their own hallucinations
+- A pure-code verifier provides **guaranteed** correctness for citation and numeric claims
+- The system falls back to sanitization (removing ungrounded claims) if the Reporter can't fix violations after 2 retries
 
-4. **Structured Output Everywhere**: Planner, Critic, Reporter — all use Pydantic `with_structured_output()`. No regex parsing of LLM free text.
-
-5. **Charts without LLM Code Execution**: The Chart Planner produces a structured spec; Matplotlib renders deterministically. No LLM-generated Python is executed for visualization.
-
-6. **Memory is Opt-in Context, Not State**: Long-term memory enriches the Planner's prompt with past analysis summaries. It does not alter the current session's state — keeping runs reproducible.
-
----
-
-## 🗺️ Roadmap
-
-- [ ] Semantic similarity search for memory retrieval (vector embeddings)
-- [ ] Multi-dataset JOIN analysis support
-- [ ] Export reports as PDF / Markdown
-- [ ] Role-based access control for multi-tenant deployment
-- [ ] Kubernetes Helm chart for production scaling
-- [ ] Real-time collaborative analysis sessions
+### Why `json_schema` structured output for Groq?
+Groq's hosted models (especially `openai/gpt-oss-*`) intermittently fail with `function_calling` mode ("Tool choice is required, but model did not call a tool"). The `json_schema` method is 100% reliable across all Groq models.
 
 ---
 
-## 📜 License
+## 🚧 Limitations & Future Work
 
-This project is built for educational and portfolio purposes. See the repository for license details.
+### Current Limitations
+- **Single CSV:** Currently processes one CSV file per analysis session
+- **SQL-first:** Complex statistical analyses default to Python sandbox but chart capabilities are limited to bar/line/scatter
+- **No streaming LLM output:** The Reporter generates the full report at once rather than streaming tokens
+- **English plan steps:** Plan steps are always in English (for tool routing), though the final report matches the user's language
+
+### Future Work
+- [ ] Multi-table JOIN support for relational datasets
+- [ ] LLM-as-Judge evaluation (GPT-4 reviewing report quality)
+- [ ] RAGAS/DeepEval integration for standard RAG benchmarks
+- [ ] Streaming LLM output in the Web UI
+- [ ] Multi-user session management with authentication
+- [ ] Kubernetes deployment with auto-scaling workers
+- [ ] Support for Excel, Parquet, and JSON data sources
+
+---
+
+## 📄 License
+
+This project is developed for academic and research purposes.
 
 ---
 
 <div align="center">
 
 **Built with ❤️ using LangGraph, FastAPI, PostgreSQL, and Redis**
-
-*[⬆ Back to Top](#-ai-data-analyst-agent)*
 
 </div>
