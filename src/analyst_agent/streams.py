@@ -22,7 +22,17 @@ _RESULT_TTL_SECONDS = 3600
 
 @lru_cache
 def get_redis_client() -> redis.Redis:
-    return redis.Redis.from_url(get_settings().redis_url, decode_responses=True)
+    # socket_timeout=None: reads must stay unbounded because XREAD/XREADGROUP calls below pass
+    # their own server-side BLOCK duration — a finite client-side timeout races against it and
+    # raises a spurious redis.exceptions.TimeoutError whenever the server legitimately blocks
+    # for the full BLOCK window (e.g. no new tasks yet). socket_connect_timeout stays bounded so
+    # an unreachable Redis host still fails fast instead of hanging forever.
+    return redis.Redis.from_url(
+        get_settings().redis_url,
+        decode_responses=True,
+        socket_timeout=None,
+        socket_connect_timeout=5,
+    )
 
 
 def task_stream(tool: ToolName) -> str:

@@ -56,6 +56,7 @@ class ToolResultData(TypedDict):
 class ExecutorTaskData(TypedDict):
     """Orchestrator -> Executor Agent handoff (mục 6.3.1)."""
 
+    run_id: str
     step_id: str
     instruction: str
     dataset_summary: DatasetSummaryData
@@ -165,6 +166,7 @@ class GroundingViolationData(TypedDict):
 
 class AgentState(TypedDict):
     messages: Annotated[list[object], add_messages]
+    run_id: str
     question: str
     dataset_path: str
     planner_status: PlannerStatus | None

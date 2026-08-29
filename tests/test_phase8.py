@@ -49,6 +49,7 @@ def tool_task(**updates: object) -> ToolTaskData:
 def executor_agent_state(**updates: object) -> ExecutorAgentState:
     state: ExecutorAgentState = {
         "task": {
+            "run_id": "run-1",
             "step_id": "step_1",
             "instruction": "Calculate monthly revenue",
             "dataset_summary": dataset_summary(),

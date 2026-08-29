@@ -31,7 +31,10 @@ def dispatch_tool(state: ExecutorAgentState) -> dict[str, object]:
     tool_choice = state["tool_choice"]
     assert tool_choice is not None
     previous_error = state["tool_result"]["error"] if state["tool_result"] else None
-    correlation_id = f"{task['step_id']}:{state['local_retry_count']}"
+    # run_id namespaces the correlation_id per graph run — without it, re-running the same
+    # question produces the same step_id sequence and collides with a prior run's leftover
+    # results:{correlation_id} entry in Redis (TTL-bounded, but easily still live).
+    correlation_id = f"{task['run_id']}:{task['step_id']}:{state['local_retry_count']}"
     tool_task: ToolTaskData = {
         "correlation_id": correlation_id,
         "instruction": task["instruction"],
@@ -146,6 +149,7 @@ def run_executor_agent(state: AgentState) -> dict[str, object]:
     """Orchestrator node: builds an ExecutorTask, runs the Executor Agent subgraph in-process
     (subgraph-as-node, mục 6.3.4a), and folds the returned ExecutorResult into analysis_log."""
     task: ExecutorTaskData = {
+        "run_id": state["run_id"],
         "step_id": f"step_{len(state['analysis_log']) + 1}",
         "instruction": state["plan"][state["current_step"]],
         "dataset_summary": _dataset_summary(state),

@@ -19,6 +19,7 @@ class RunResult(TypedDict):
 def initial_state(question: str, dataset_path: str) -> AgentState:
     return {
         "messages": [],
+        "run_id": uuid4().hex,
         "question": question,
         "dataset_path": dataset_path,
         "planner_status": None,
