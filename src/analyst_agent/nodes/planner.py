@@ -35,14 +35,20 @@ Use ready only with a non-empty plan.
 
 def create_plan(state: AgentState) -> dict[str, object]:
     model = create_chat_model("planner").with_structured_output(PlannerOutput)
+    from analyst_agent.memory.retriever import format_memory_context, retrieve_relevant_memory
+    memories = retrieve_relevant_memory(state["dataset_path"])
+    memory_context = format_memory_context(memories)
+
+    human_prompt = (
+        f"Dataset: {state['dataset_path']}\nRequest: {state['question']}\n\n"
+        f"{format_clarification_context(state['clarification_history'])}\n\n"
+        f"{memory_context}"
+    )
+
     result = model.invoke(
         [
             ("system", SYSTEM_PROMPT),
-            (
-                "human",
-                f"Dataset: {state['dataset_path']}\nRequest: {state['question']}\n\n"
-                f"{format_clarification_context(state['clarification_history'])}",
-            ),
+            ("human", human_prompt.strip()),
         ]
     )
     assert isinstance(result, PlannerOutput)

@@ -35,6 +35,10 @@ class Settings(BaseSettings):
     executor_model: str = "gpt-4.1-mini"
     critic_model: str = "gpt-4.1-mini"
     reporter_model: str = "gpt-4.1-mini"
+    langsmith_api_key: SecretStr | None = None
+    langsmith_tracing: bool = False
+    langsmith_project: str = "ai-data-analyst-agent"
+    observability_backend: Literal["langsmith", "local", "none"] = "local"
 
     model_config = SettingsConfigDict(
         env_file=".env",

@@ -62,6 +62,29 @@ def finalize_report(state: AgentState) -> dict[str, object]:
     if report_data is None:
         raise ValueError("Finalizer requires a verified or sanitized report")
     report = FinalReport.model_validate(report_data)
+
+    # Save to memory store
+    try:
+        import time
+
+        from analyst_agent.memory.retriever import compute_dataset_hash
+        from analyst_agent.memory.schemas import AnalysisRecord
+        from analyst_agent.memory.store import get_memory_store
+
+        record = AnalysisRecord(
+            id=state.get("run_id") or "run",
+            dataset_hash=compute_dataset_hash(state["dataset_path"]),
+            question=state["question"],
+            summary=report.summary,
+            key_findings=[f.claim for f in report.key_findings],
+            root_causes=[rc.claim for rc in report.root_causes],
+            confidence=report.confidence,
+            created_at=time.time(),
+        )
+        get_memory_store().save(record)
+    except Exception:
+        pass  # Non-fatal if memory storage fails
+
     return {
         "final_report": report_data,
         "final_answer": format_report(report),

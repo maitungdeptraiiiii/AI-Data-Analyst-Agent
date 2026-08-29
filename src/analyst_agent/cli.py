@@ -50,6 +50,7 @@ def initial_state(question: str, dataset_path: str) -> AgentState:
         "grounding_max_retries": 2,
         "grounding_status": None,
         "final_answer": None,
+        "node_metrics": [],
     }
 
 

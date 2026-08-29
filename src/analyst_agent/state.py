@@ -76,7 +76,7 @@ class ExecutorResultData(TypedDict):
     attempts: list[AnalysisAttempt]
 
 
-class ToolTaskData(TypedDict):
+class ToolTaskData(TypedDict, total=False):
     """Executor Agent -> Tool Agent handoff (mục 6.3.1/6.3.4b); a `tasks:{tool}` stream entry."""
 
     correlation_id: str
@@ -86,6 +86,7 @@ class ToolTaskData(TypedDict):
     previous_code: str | None
     previous_purpose: str | None
     previous_error: str | None
+    trace_id: str | None
 
 
 class ToolResultMessage(TypedDict):
@@ -164,6 +165,17 @@ class GroundingViolationData(TypedDict):
     message: str
 
 
+class NodeMetricsData(TypedDict):
+    node_name: str
+    duration_ms: float
+    tokens_in: int
+    tokens_out: int
+    total_tokens: int
+    model: str | None
+    estimated_cost_usd: float
+    timestamp: float
+
+
 class AgentState(TypedDict):
     messages: Annotated[list[object], add_messages]
     run_id: str
@@ -197,6 +209,7 @@ class AgentState(TypedDict):
     grounding_max_retries: int
     grounding_status: Literal["pending", "valid", "invalid"] | None
     final_answer: str | None
+    node_metrics: list[NodeMetricsData]
 
 
 class ToolAgentState(TypedDict):
