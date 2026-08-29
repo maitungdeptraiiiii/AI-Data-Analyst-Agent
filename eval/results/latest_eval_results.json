@@ -1,7 +1,7 @@
 {
   "total_cases": 30,
-  "passed_cases": 28,
-  "pass_rate_pct": 93.33,
+  "passed_cases": 25,
+  "pass_rate_pct": 83.33,
   "by_category": {
     "trend": {
       "total": 5,
@@ -25,7 +25,7 @@
     },
     "off_topic": {
       "total": 3,
-      "passed": 3
+      "passed": 0
     },
     "edge_case": {
       "total": 3,
@@ -373,15 +373,15 @@
       "id": "off_topic_01_weather",
       "category": "off_topic",
       "question": "Hôm nay thời tiết Hà Nội thế nào?",
-      "passed": true,
+      "passed": false,
       "details": {
         "expected_planner_status": {
           "passed": true,
           "message": "Planner status matched 'off_topic'"
         },
         "no_sql_executed": {
-          "passed": true,
-          "message": "No analysis steps were executed"
+          "passed": false,
+          "message": "Expected no steps executed, but found 1"
         }
       }
     },
@@ -389,15 +389,15 @@
       "id": "off_topic_02_coding_question",
       "category": "off_topic",
       "question": "Viết giúp tôi một hàm quicksort bằng C++",
-      "passed": true,
+      "passed": false,
       "details": {
         "expected_planner_status": {
           "passed": true,
           "message": "Planner status matched 'off_topic'"
         },
         "no_sql_executed": {
-          "passed": true,
-          "message": "No analysis steps were executed"
+          "passed": false,
+          "message": "Expected no steps executed, but found 1"
         }
       }
     },
@@ -405,15 +405,15 @@
       "id": "off_topic_03_poem",
       "category": "off_topic",
       "question": "Hãy làm một bài thơ về mùa thu",
-      "passed": true,
+      "passed": false,
       "details": {
         "expected_planner_status": {
           "passed": true,
           "message": "Planner status matched 'off_topic'"
         },
         "no_sql_executed": {
-          "passed": true,
-          "message": "No analysis steps were executed"
+          "passed": false,
+          "message": "Expected no steps executed, but found 1"
         }
       }
     },
@@ -533,5 +533,9 @@
         }
       }
     }
-  ]
+  ],
+  "llm_judge_avg_score": 4.5,
+  "ragas_faithfulness_avg": 1.0,
+  "sql_execution_accuracy_pct": 100.0,
+  "sql_syntax_validity_pct": 100.0
 }

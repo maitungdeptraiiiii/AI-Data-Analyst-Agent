@@ -13,13 +13,16 @@ from analyst_agent.config import get_settings
 ModelRole = Literal["planner", "executor", "critic", "reporter"]
 
 
-class _GroqJsonSchemaChat(ChatGroq):  # type: ignore[misc]
+class _GroqJsonSchemaChat(ChatGroq):
     """ChatGroq wrapper that forces ``method='json_schema'`` for structured output.
 
     Groq's ``openai/gpt-oss-*`` models intermittently fail with a 400 error
     ("Tool choice is required, but model did not call a tool") when using the
     default ``function_calling`` method.  ``json_schema`` is reliable.
     """
+
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
 
     def with_structured_output(
         self,
