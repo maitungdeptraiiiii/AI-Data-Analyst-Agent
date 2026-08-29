@@ -1,4 +1,4 @@
-<![CDATA[<div align="center">
+<div align="center">
 
 # 🧠 AI Data Analyst Agent
 
@@ -676,4 +676,3 @@ This project is built for educational and portfolio purposes. See the repository
 *[⬆ Back to Top](#-ai-data-analyst-agent)*
 
 </div>
-]]>
