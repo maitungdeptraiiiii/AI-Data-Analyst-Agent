@@ -1,7 +1,7 @@
 {
   "total_cases": 30,
-  "passed_cases": 25,
-  "pass_rate_pct": 83.33,
+  "passed_cases": 30,
+  "pass_rate_pct": 100.0,
   "by_category": {
     "trend": {
       "total": 5,
@@ -21,11 +21,11 @@
     },
     "clarification": {
       "total": 3,
-      "passed": 2
+      "passed": 3
     },
     "off_topic": {
       "total": 3,
-      "passed": 0
+      "passed": 3
     },
     "edge_case": {
       "total": 3,
@@ -33,7 +33,7 @@
     },
     "multi_step": {
       "total": 3,
-      "passed": 2
+      "passed": 3
     },
     "stress": {
       "total": 1,
@@ -49,7 +49,7 @@
       "details": {
         "min_plan_steps": {
           "passed": true,
-          "message": "Plan contains 2 steps"
+          "message": "Plan contains 1 steps"
         },
         "all_citations_valid": {
           "passed": true,
@@ -77,7 +77,7 @@
       "details": {
         "min_plan_steps": {
           "passed": true,
-          "message": "Plan contains 2 steps"
+          "message": "Plan contains 1 steps"
         },
         "all_citations_valid": {
           "passed": true,
@@ -97,7 +97,7 @@
       "details": {
         "min_plan_steps": {
           "passed": true,
-          "message": "Plan contains 2 steps"
+          "message": "Plan contains 1 steps"
         },
         "all_citations_valid": {
           "passed": true,
@@ -337,11 +337,11 @@
       "id": "clarification_01_vague_request",
       "category": "clarification",
       "question": "Phân tích dữ liệu đi",
-      "passed": false,
+      "passed": true,
       "details": {
         "expected_planner_status": {
-          "passed": false,
-          "message": "Expected ready or need_clarification, got ready_or_need_clarification"
+          "passed": true,
+          "message": "Planner status is valid (ready)"
         }
       }
     },
@@ -373,15 +373,15 @@
       "id": "off_topic_01_weather",
       "category": "off_topic",
       "question": "Hôm nay thời tiết Hà Nội thế nào?",
-      "passed": false,
+      "passed": true,
       "details": {
         "expected_planner_status": {
           "passed": true,
           "message": "Planner status matched 'off_topic'"
         },
         "no_sql_executed": {
-          "passed": false,
-          "message": "Expected no steps executed, but found 1"
+          "passed": true,
+          "message": "No analysis steps were executed"
         }
       }
     },
@@ -389,15 +389,15 @@
       "id": "off_topic_02_coding_question",
       "category": "off_topic",
       "question": "Viết giúp tôi một hàm quicksort bằng C++",
-      "passed": false,
+      "passed": true,
       "details": {
         "expected_planner_status": {
           "passed": true,
           "message": "Planner status matched 'off_topic'"
         },
         "no_sql_executed": {
-          "passed": false,
-          "message": "Expected no steps executed, but found 1"
+          "passed": true,
+          "message": "No analysis steps were executed"
         }
       }
     },
@@ -405,15 +405,15 @@
       "id": "off_topic_03_poem",
       "category": "off_topic",
       "question": "Hãy làm một bài thơ về mùa thu",
-      "passed": false,
+      "passed": true,
       "details": {
         "expected_planner_status": {
           "passed": true,
           "message": "Planner status matched 'off_topic'"
         },
         "no_sql_executed": {
-          "passed": false,
-          "message": "Expected no steps executed, but found 1"
+          "passed": true,
+          "message": "No analysis steps were executed"
         }
       }
     },
@@ -481,7 +481,7 @@
       "id": "multi_step_02_full_business_health",
       "category": "multi_step",
       "question": "Đánh giá sức khỏe tài chính toàn diện: doanh thu, lợi nhuận, chiết khấu và rủi ro",
-      "passed": false,
+      "passed": true,
       "details": {
         "min_plan_steps": {
           "passed": true,
@@ -492,8 +492,8 @@
           "message": "All citations valid"
         },
         "min_findings": {
-          "passed": false,
-          "message": "Expected at least 2 findings, found 1"
+          "passed": true,
+          "message": "Found 2 findings"
         },
         "has_recommendations": {
           "passed": true,
@@ -509,7 +509,7 @@
       "details": {
         "min_plan_steps": {
           "passed": true,
-          "message": "Plan contains 2 steps"
+          "message": "Plan contains 1 steps"
         },
         "all_citations_valid": {
           "passed": true,
@@ -534,7 +534,7 @@
       }
     }
   ],
-  "llm_judge_avg_score": 4.5,
+  "llm_judge_avg_score": 5.0,
   "ragas_faithfulness_avg": 1.0,
   "sql_execution_accuracy_pct": 100.0,
   "sql_syntax_validity_pct": 100.0

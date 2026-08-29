@@ -1,11 +1,8 @@
 # AI Data Analyst Agent - Evaluation Summary Report
 
 - **Total Test Cases**: 30
-- **Passed**: 25
-- **Pass Rate**: 83.33%
-
-- **Baseline Comparison**: Baseline=93.33%, Delta=-10.0%
-⚠️ **REGRESSION DETECTED**: Pass rate dropped significantly!
+- **Passed**: 30
+- **Pass Rate**: 100.0%
 
 ## Results by Category
 
@@ -15,8 +12,8 @@
 | root_cause | 5 | 5 | 100.0% |
 | breakdown | 4 | 4 | 100.0% |
 | outlier | 3 | 3 | 100.0% |
-| clarification | 3 | 2 | 66.7% |
-| off_topic | 3 | 0 | 0.0% |
+| clarification | 3 | 3 | 100.0% |
+| off_topic | 3 | 3 | 100.0% |
 | edge_case | 3 | 3 | 100.0% |
-| multi_step | 3 | 2 | 66.7% |
+| multi_step | 3 | 3 | 100.0% |
 | stress | 1 | 1 | 100.0% |

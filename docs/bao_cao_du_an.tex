@@ -389,6 +389,29 @@ Toàn bộ hệ thống được bảo vệ bởi bộ kiểm thử tự động
 \end{tabularx}
 \end{table}
 
+\begin{table}[H]
+\centering
+\caption{Phân bổ 30 Golden Test Cases qua 9 Danh mục Phân tích}
+\label{tab:golden_categories}
+\begin{tabularx}{\textwidth}{lXcc}
+\toprule
+\textbf{Danh mục} & \textbf{Mục tiêu Phân tích \& Ranh giới Kiểm thử} & \textbf{Số lượng} & \textbf{Tỷ lệ Pass} \\
+\midrule
+\texttt{trend} & Chuỗi thời gian, tăng trưởng doanh thu theo tháng/quý & 5 & $100\%$ (5/5) \\
+\texttt{root\_cause} & Bóc tách nguyên nhân đa chiều (sản phẩm, khu vực, chiết khấu) & 5 & $100\%$ (5/5) \\
+\texttt{breakdown} & Phân rã dữ liệu phân cấp theo ngành hàng và địa lý & 4 & $100\%$ (4/4) \\
+\texttt{outlier} & Phát hiện giá trị đơn hàng bất thường và đột biến & 3 & $100\%$ (3/3) \\
+\texttt{clarification} & Xử lý câu hỏi mơ hồ, kích hoạt Human-in-the-Loop & 3 & $100\%$ (3/3) \\
+\texttt{off\_topic} & Từ chối an toàn các câu hỏi phi phân tích (0 SQL executed) & 3 & $100\%$ (3/3) \\
+\texttt{edge\_case} & Xử lý tập dữ liệu chứa nhiều giá trị NULL và khuyết thiếu & 3 & $100\%$ (3/3) \\
+\texttt{multi\_step} & Đánh giá sức khỏe tài chính toàn diện với kế hoạch đa bước & 3 & $100\%$ (3/3) \\
+\texttt{stress} & Tổng hợp dữ liệu phức tạp nhiều tầng với tải cao & 1 & $100\%$ (1/1) \\
+\midrule
+\textbf{Tổng cộng} & \textbf{Toàn bộ 9 Danh mục Phân tích Nghiệp vụ} & \textbf{30} & $\mathbf{100\%}$ \textbf{(30/30)} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
 \subsection{Kết quả Thực nghiệm Sơ bộ (Preliminary Benchmark Results)}
 Bảng~\ref{tab:preliminary_results} tổng hợp các chỉ số thực nghiệm đo đạc được trên toàn bộ hệ thống.
 

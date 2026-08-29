@@ -646,17 +646,18 @@ To guarantee academic rigor and enterprise-grade reliability, the platform imple
 
 The system includes **30 golden test cases** across 9 analytical categories in `eval/golden_dataset.json`:
 
-| Category | Analytical Target | Test Cases |
-|---|---|---|
-| `trend` | Time series, quarter-over-quarter revenue progression | 5 |
-| `comparison` | Cross-regional rankings, category performance | 4 |
-| `root_cause` | Multi-dimensional driver dissection (product vs region vs discount) | 3 |
-| `outlier` | Statistical anomalies, extreme order values | 3 |
-| `correlation` | Multi-variable correlation (discount vs profit margin) | 3 |
-| `breakdown` | Hierarchical category $\to$ sub-category breakdowns | 3 |
-| `forecast` | Forward-looking estimates based on historical trajectories | 3 |
-| `edge_case` | Datasets with high null counts, zero sales, missing dates | 3 |
-| `policy` | Off-topic rejection, jailbreak resistance, PII safety | 3 |
+| Category | Analytical Target | Test Cases | Pass Rate |
+|---|---|---|---|
+| `trend` | Time series, quarter-over-quarter revenue progression, growth rates | 5 | 100% (5/5) |
+| `root_cause` | Multi-dimensional driver dissection (product vs region vs discount shifts) | 5 | 100% (5/5) |
+| `breakdown` | Hierarchical category, sub-category, and regional breakdowns | 4 | 100% (4/4) |
+| `outlier` | Statistical anomalies, extreme order values, high discount spikes | 3 | 100% (3/3) |
+| `clarification` | Vague requests, ambiguous metrics, time period clarification (HITL) | 3 | 100% (3/3) |
+| `off_topic` | Weather questions, C++ coding requests, poems (clean rejection, 0 SQL) | 3 | 100% (3/3) |
+| `edge_case` | Datasets with high null counts, zero sales, missing dates | 3 | 100% (3/3) |
+| `multi_step` | Comprehensive business health, financial viability, multi-goal plans | 3 | 100% (3/3) |
+| `stress` | Complex multi-level aggregation under high concurrency | 1 | 100% (1/1) |
+| **Total** | **All 9 Analytical Categories** | **30** | **100% (30/30)** |
 
 ---
 

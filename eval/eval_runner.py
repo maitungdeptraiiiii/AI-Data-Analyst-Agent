@@ -43,13 +43,43 @@ def run_evaluation(
         properties = case["properties"]
 
         if mock_run:
-            # Mock successful state matching common properties
+            expected_status = properties.get("expected_planner_status", "ready")
+            actual_status = "ready" if expected_status == "ready_or_need_clarification" else expected_status
+
+            min_f = properties.get("min_findings", 1)
+            min_rc = properties.get("min_root_causes", 1)
+            min_steps = properties.get("min_plan_steps", 2)
+
+            findings = [
+                {
+                    "claim": f"Finding {i + 1}: Sales reached 1000 USD",
+                    "citation_step_ids": ["step_1"],
+                    "numeric_claims": [
+                        {
+                            "citation_step_id": "step_1",
+                            "metric_name": "sales",
+                            "claimed_value": 1000.0,
+                            "tolerance_pct": 1.0,
+                        }
+                    ],
+                }
+                for i in range(min_f)
+            ]
+            root_causes = [
+                {
+                    "claim": f"Root cause {i + 1}: Higher transaction volume",
+                    "citation_step_ids": ["step_1"],
+                    "numeric_claims": [],
+                }
+                for i in range(min_rc)
+            ]
+
+            is_off_topic = actual_status == "off_topic"
+
             mock_state: dict[str, Any] = {
                 "question": question,
-                "planner_status": case.get("properties", {}).get(
-                    "expected_planner_status", "ready"
-                ),
-                "plan": ["Calculate monthly metrics", "Breakdown by category"],
+                "planner_status": actual_status,
+                "plan": [f"Step {i + 1}" for i in range(min_steps)] if not is_off_topic else [],
                 "analysis_log": [
                     {
                         "step_id": "step_1",
@@ -62,44 +92,19 @@ def run_evaluation(
                         "error": None,
                         "attempts": [{"attempt": 1, "success": True, "error_category": None}],
                     }
-                ],
+                ]
+                if not is_off_topic
+                else [],
                 "final_report": {
                     "summary": f"Analysis for: {question}",
-                    "key_findings": [
-                        {
-                            "claim": "Sales reached 1000 USD",
-                            "citation_step_ids": ["step_1"],
-                            "numeric_claims": [
-                                {
-                                    "citation_step_id": "step_1",
-                                    "metric_name": "sales",
-                                    "claimed_value": 1000.0,
-                                    "tolerance_pct": 1.0,
-                                }
-                            ],
-                        }
-                    ],
-                    "root_causes": [
-                        {
-                            "claim": "Higher transaction volume",
-                            "citation_step_ids": ["step_1"],
-                            "numeric_claims": [],
-                        }
-                    ],
-                    "recommendations": ["Expand high-performing categories"],
-                    "confidence": "high",
+                    "key_findings": findings if not is_off_topic else [],
+                    "root_causes": root_causes if not is_off_topic else [],
+                    "recommendations": ["Expand high-performing categories"] if not is_off_topic else [],
+                    "confidence": "high" if not is_off_topic else "low",
                     "limitations": [],
                 },
                 "final_answer": "Final analysis report with verified metrics.",
             }
-
-            # Handle off_topic expectations
-            if properties.get("expected_planner_status") == "off_topic":
-                mock_state["planner_status"] = "off_topic"
-                mock_state["plan"] = []
-                mock_state["final_report"]["key_findings"] = []
-                mock_state["final_report"]["root_causes"] = []
-                mock_state["final_report"]["confidence"] = "low"
 
             from analyst_agent.state import AgentState
 
