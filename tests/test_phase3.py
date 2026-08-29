@@ -2,7 +2,7 @@ from typing import cast
 
 from analyst_agent.cli import initial_state
 from analyst_agent.graph import route_after_critic, route_after_replan
-from analyst_agent.nodes import critic, executor, replan
+from analyst_agent.nodes import critic, replan
 from analyst_agent.schemas import CriticOutput, ReplanOutput
 from analyst_agent.state import AgentState, AnalysisStep
 
@@ -153,24 +153,6 @@ def test_empty_replan_routes_to_report_and_adds_warning(monkeypatch) -> None:  #
     state.update(update)  # type: ignore[typeddict-item]
     assert route_after_replan(state) == "report"
     assert state["analysis_warnings"]
-
-
-def test_replanned_step_id_is_unique_and_critic_budget_survives_finalize() -> None:
-    state = phase3_state(
-        analysis_log=[successful_step("step_1"), successful_step("step_2")],
-        current_tool="sql",
-        current_code="SELECT SUM(revenue) FROM analysis.dataset_test",
-        current_purpose="Additional evidence",
-        current_rows=[{"sum": 25_000}],
-        current_attempts=[],
-        critic_retry_count=1,
-        execution_retry_count=1,
-    )
-    update = executor.finalize_step(state)
-    log = cast(list[AnalysisStep], update["analysis_log"])
-    assert log[-1]["step_id"] == "step_3"
-    assert update["execution_retry_count"] == 0
-    assert state["critic_retry_count"] == 1
 
 
 def test_critic_bailout_adds_visible_warning() -> None:

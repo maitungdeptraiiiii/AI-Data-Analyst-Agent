@@ -171,7 +171,13 @@ def test_chart_failure_adds_warning_without_raising(monkeypatch) -> None:  # typ
 def test_report_constraints_override_paths_warnings_and_confidence() -> None:
     raw = FinalReport(
         summary="Summary",
-        key_findings=[Finding(claim="Revenue declined")],
+        key_findings=[
+            Finding(
+                claim="Revenue declined",
+                citation_step_ids=["step_1"],
+                numeric_claims=[],
+            )
+        ],
         root_causes=[],
         recommendations=[],
         chart_paths=["invented.png"],
@@ -217,9 +223,9 @@ def test_reporter_stores_structured_report(monkeypatch) -> None:  # type: ignore
 
     monkeypatch.setattr(reporter, "create_chat_model", lambda role: FakeModel())
     update = reporter.create_report(phase4_state())
-    final_report = cast(FinalReportData, update["final_report"])
+    final_report = cast(FinalReportData, update["draft_report"])
     assert final_report["summary"] == "Revenue decreased"
-    assert "Confidence: medium" in str(update["final_answer"])
+    assert update["grounding_status"] == "pending"
 
 
 def test_reporter_prompt_tells_llm_when_a_chart_already_exists(monkeypatch) -> None:  # type: ignore[no-untyped-def]

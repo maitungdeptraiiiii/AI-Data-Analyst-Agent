@@ -19,10 +19,12 @@ dependencies = [
     "psycopg[binary,pool]>=3.2",
     "pydantic>=2.9",
     "pydantic-settings>=2.5",
+    "redis>=5.0",
 ]
 
 [dependency-groups]
 dev = [
+    "fakeredis>=2.20",
     "mypy>=1.11",
     "pandas-stubs>=2.2",
     "pytest>=8.3",
@@ -31,6 +33,7 @@ dev = [
 
 [project.scripts]
 analyst-agent = "analyst_agent.cli:main"
+analyst-agent-tool-worker = "analyst_agent.workers.tool_worker:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/analyst_agent"]

@@ -9,7 +9,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     """Application settings loaded from environment variables or .env."""
 
-    llm_provider: Literal["anthropic", "openai"] = "anthropic"
+    llm_provider: Literal["anthropic", "openai"] = "openai"
     anthropic_api_key: SecretStr | None = None
     openai_api_key: SecretStr | None = None
     llm_timeout_seconds: float = 60.0
@@ -27,10 +27,14 @@ class Settings(BaseSettings):
     )
     postgres_ingest_dsn: str
     postgres_executor_dsn: str
-    planner_model: str = "claude-sonnet-5"
-    executor_model: str = "claude-sonnet-5"
-    critic_model: str = "claude-sonnet-5"
-    reporter_model: str = "claude-sonnet-5"
+    redis_url: str = "redis://localhost:6379/0"
+    tool_agent_consumer_group: str = "tool-agents"
+    tool_agent_wait_timeout_seconds: float = 30.0
+    tool_agent_visibility_timeout_ms: int = 30_000
+    planner_model: str = "gpt-4.1-mini"
+    executor_model: str = "gpt-4.1-mini"
+    critic_model: str = "gpt-4.1-mini"
+    reporter_model: str = "gpt-4.1-mini"
 
     model_config = SettingsConfigDict(
         env_file=".env",

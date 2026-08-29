@@ -1,2 +1,1 @@
 """LangGraph AI data analyst."""
-

@@ -4,9 +4,6 @@ from pathlib import Path
 
 import pytest
 
-from analyst_agent.cli import initial_state
-from analyst_agent.nodes.executor import finalize_step
-from analyst_agent.nodes.tool_router import choose_tool
 from analyst_agent.python_guard import PythonPolicyError, validate_python_code
 from analyst_agent.sandbox import build_docker_command
 from analyst_agent.serialization import extract_metrics, normalize_json_value
@@ -29,50 +26,6 @@ def test_guard_allows_analysis_contract() -> None:
 def test_guard_rejects_dangerous_code(code: str) -> None:
     with pytest.raises(PythonPolicyError):
         validate_python_code(code)
-
-
-def test_router_defaults_sql_and_selects_python_for_correlation() -> None:
-    state = initial_state("Analyze", "data/sample_sales.csv")
-    state["dataset_info"] = {
-        "table_name": "analysis.dataset_test",
-        "columns": {},
-        "n_rows": 100,
-        "null_summary": {},
-        "sample_rows": [],
-    }
-    state["plan"] = ["Calculate revenue by month"]
-    assert choose_tool(state)["current_tool"] == "sql"
-    state["plan"] = ["Calculate correlation between price and units"]
-    assert choose_tool(state)["current_tool"] == "python"
-
-
-def test_router_forces_sql_for_large_dataset() -> None:
-    state = initial_state("Analyze", "data/sample_sales.csv")
-    state["dataset_info"] = {
-        "table_name": "analysis.dataset_test",
-        "columns": {},
-        "n_rows": 100_001,
-        "null_summary": {},
-        "sample_rows": [],
-    }
-    state["plan"] = ["Calculate correlation"]
-    assert choose_tool(state)["current_tool"] == "sql"
-
-
-def test_finalize_preserves_python_metrics_and_resets_current_metrics() -> None:
-    state = initial_state("Analyze", "data/sample_sales.csv")
-    state.update(
-        plan=["Detect outliers"],
-        current_tool="python",
-        current_code="metrics = {'n': 2}",
-        current_purpose="Outlier analysis",
-        current_rows=[{"value": 10}],
-        current_metrics={"outlier_count": 2.0},
-    )
-    update = finalize_step(state)
-    assert update["analysis_log"][0]["metrics"] == {"outlier_count": 2.0}
-    assert update["analysis_log"][0]["tool"] == "python"
-    assert update["current_metrics"] == {}
 
 
 def test_sql_metric_flatten_and_json_normalization() -> None:

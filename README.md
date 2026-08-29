@@ -94,9 +94,19 @@ separate retry budgets; the Critic loop stops after two improvement rounds and e
 
 After the Critic passes, a Chart Planner may select one successful analysis step and produce a
 structured chart specification. Deterministic Matplotlib code validates and renders that spec; no
-LLM-generated Python is executed. Chart failure is non-fatal. Reporter returns both a structured
-`FinalReport` and CLI text, while application code overrides chart paths, limitations, and maximum
-confidence from real state.
+LLM-generated Python is executed. Chart failure is non-fatal. Reporter stages a structured
+`FinalReport`, while application code overrides chart paths, limitations, and maximum confidence
+from real state. Every finding and root cause must cite successful analysis step IDs. Numeric claims
+also name a recorded metric so a deterministic verifier can compare the reported value with the
+evidence (1% tolerance by default). Invalid drafts get at most two correction rounds. If that budget
+is exhausted, unverifiable findings are removed and confidence is lowered before CLI text is built.
+
+A single-row result exposes each column directly as a metric (e.g. `revenue`). A breakdown result
+(one row per category, such as revenue by month or by product) exposes `{column}__{category}` per
+row instead, so the reporter can still cite a specific, verifiable number per category. This only
+covers breakdowns with exactly one non-numeric label column; a result grouped by two dimensions at
+once (e.g. region and product together) yields no metrics, so any claim citing it is caught by the
+grounding verifier and sanitized like any other unverifiable claim.
 
 When Planner cannot resolve genuine ambiguity, the graph pauses with a JSON clarification payload.
 SQLite checkpoints persist state across CLI processes; resume uses the same thread ID and
@@ -115,20 +125,39 @@ Build the sandbox image before running Python-routed analysis:
 docker compose --profile sandbox-build build python-sandbox
 ```
 
+The Executor Agent talks to Tool Agents (SQL/Python) over Redis Streams (`tasks:sql`,
+`tasks:python`) instead of calling them in-process — start a worker per tool before running an
+analysis that needs it, or `execute_step` will block until `TOOL_AGENT_WAIT_TIMEOUT_SECONDS`
+elapses and report a retryable infrastructure error:
+
+```powershell
+uv run analyst-agent-tool-worker sql
+uv run analyst-agent-tool-worker python
+```
+
+Each worker is its own process, consumes its tool's stream through a Redis consumer group, and
+reclaims tasks left un-ACKed by a crashed/hung worker after `TOOL_AGENT_VISIBILITY_TIMEOUT_MS`.
+Run multiple workers per tool to scale that tool independently; a worker checks
+`results:{correlation_id}` before generating code so a redelivered task is never double-executed.
+
 ## Verify
 
 ```powershell
 uv run ruff check .
 uv run mypy src
-uv run pytest -m "not integration"
+uv run pytest -m "not integration and not sandbox_integration"
 uv run pytest -m integration
+uv run pytest -m sandbox_integration
 ```
 
 The integration test requires the PostgreSQL container and `POSTGRES_EXECUTOR_DSN` in the process
 environment. PII redaction is deliberately marked as a Phase 11 TODO; use only non-sensitive data
 with this implementation.
 
-## Phase 6 boundaries
+## Phase 7 boundaries
 
-Not implemented yet: verified citation grounding, Redis Streams, multi-agent workers, API service,
-or observability. Human-in-the-loop currently covers clarification only.
+Grounding verifies citations and numeric claims in findings and root causes. Narrative summaries and
+recommendations are constrained by the Reporter prompt but are not independently fact-checked yet.
+Not implemented yet: API service, or observability. Redis Streams and the SQL/Python Tool Agent
+workers are implemented (see Run); the Chart Agent still runs in-process, after the Critic.
+Human-in-the-loop currently covers clarification only.

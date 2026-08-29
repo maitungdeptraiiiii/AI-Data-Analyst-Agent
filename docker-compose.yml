@@ -23,6 +23,21 @@ services:
       - default
       - analysis_internal
 
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - redis_data:/data
+    networks:
+      - default
+      - analysis_internal
+
   python-sandbox:
     profiles: ["sandbox-build"]
     build:
@@ -33,6 +48,7 @@ services:
 
 volumes:
   postgres_data:
+  redis_data:
 
 networks:
   analysis_internal:

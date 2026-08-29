@@ -1,5 +1,5 @@
 from analyst_agent.config import get_settings
-from analyst_agent.state import AgentState
+from analyst_agent.state import DatasetSummaryData, ToolName
 
 PYTHON_HINTS = {
     "correlation",
@@ -13,12 +13,10 @@ PYTHON_HINTS = {
 }
 
 
-def choose_tool(state: AgentState) -> dict[str, object]:
-    instruction = state["plan"][state["current_step"]].lower()
-    dataset = state["dataset_info"]
+def select_tool(instruction: str, dataset_summary: DatasetSummaryData) -> ToolName:
     use_python = bool(
-        dataset
-        and dataset["n_rows"] <= get_settings().python_max_dataset_rows
-        and any(hint in instruction for hint in PYTHON_HINTS)
+        dataset_summary
+        and dataset_summary["n_rows"] <= get_settings().python_max_dataset_rows
+        and any(hint in instruction.lower() for hint in PYTHON_HINTS)
     )
-    return {"current_tool": "python" if use_python else "sql"}
+    return "python" if use_python else "sql"

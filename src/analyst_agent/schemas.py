@@ -76,9 +76,24 @@ class ChartPlanOutput(BaseModel):
         return self
 
 
+class NumericClaim(BaseModel):
+    citation_step_id: str
+    metric_name: str
+    claimed_value: float
+    tolerance_pct: float = Field(default=1.0, ge=0, le=10)
+
+
 class Finding(BaseModel):
     claim: str
-    supporting_step_ids: list[str] = Field(default_factory=list)
+    citation_step_ids: list[str] = Field(min_length=1)
+    numeric_claims: list[NumericClaim] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def validate_numeric_claim_citations(self) -> "Finding":
+        citations = set(self.citation_step_ids)
+        if any(item.citation_step_id not in citations for item in self.numeric_claims):
+            raise ValueError("numeric claim must reference one of the finding citations")
+        return self
 
 
 class FinalReport(BaseModel):

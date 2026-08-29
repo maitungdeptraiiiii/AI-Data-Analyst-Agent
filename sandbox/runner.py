@@ -1,5 +1,6 @@
 import builtins
 import json
+import math
 from contextlib import redirect_stdout
 from io import StringIO
 from pathlib import Path
@@ -42,6 +43,10 @@ try:
     result = namespace.get("result")
     if not isinstance(metrics, dict):
         raise TypeError("Generated code must assign a metrics dict")
+    safe_metrics = {str(k): float(v) for k, v in metrics.items()}
+    non_finite = [k for k, v in safe_metrics.items() if not math.isfinite(v)]
+    if non_finite:
+        raise ValueError(f"metrics contains non-finite values: {', '.join(non_finite)}")
     if isinstance(result, pd.DataFrame):
         rows = result.head(configuration["max_output_rows"]).to_dict(orient="records")
     elif isinstance(result, list):
@@ -51,7 +56,7 @@ try:
     payload = {
         "success": True,
         "rows": rows,
-        "metrics": {str(k): float(v) for k, v in metrics.items()},
+        "metrics": safe_metrics,
         "error": None,
     }
 except Exception as exc:

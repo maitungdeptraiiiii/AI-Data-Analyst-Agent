@@ -7,11 +7,27 @@ class PythonPolicyError(ValueError):
 
 ALLOWED_MODULES = {"pandas", "numpy", "math", "statistics", "datetime"}
 FORBIDDEN_CALLS = {
-    "eval", "exec", "compile", "open", "__import__", "globals", "locals", "getattr",
-    "setattr", "delattr", "input", "breakpoint",
+    "eval",
+    "exec",
+    "compile",
+    "open",
+    "__import__",
+    "globals",
+    "locals",
+    "getattr",
+    "setattr",
+    "delattr",
+    "input",
+    "breakpoint",
 }
 FORBIDDEN_ATTRIBUTES = {
-    "read_csv", "read_json", "read_pickle", "read_html", "read_sql", "load", "save",
+    "read_csv",
+    "read_json",
+    "read_pickle",
+    "read_html",
+    "read_sql",
+    "load",
+    "save",
 }
 
 

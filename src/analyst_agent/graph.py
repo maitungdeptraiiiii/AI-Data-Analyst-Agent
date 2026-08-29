@@ -12,12 +12,16 @@ from analyst_agent.nodes.chart_creator import create_chart_node
 from analyst_agent.nodes.chart_planner import plan_chart
 from analyst_agent.nodes.critic import bailout_after_critic, review_evidence
 from analyst_agent.nodes.data_inspector import inspect_data
-from analyst_agent.nodes.executor import execute_step, finalize_step
-from analyst_agent.nodes.fix_and_retry import fix_and_retry
+from analyst_agent.nodes.executor_agent import run_executor_agent
+from analyst_agent.nodes.grounding_verifier import (
+    finalize_report,
+    prepare_grounding_retry,
+    sanitize_report,
+    verify_report,
+)
 from analyst_agent.nodes.planner import create_plan
 from analyst_agent.nodes.replan import create_additional_plan
 from analyst_agent.nodes.reporter import create_report
-from analyst_agent.nodes.tool_router import choose_tool
 from analyst_agent.state import AgentState
 
 
@@ -39,17 +43,6 @@ def route_after_execution(state: AgentState) -> Literal["continue", "critic"]:
     return "critic"
 
 
-def route_after_sql(state: AgentState) -> Literal["retry", "finalize"]:
-    error = state["current_error"]
-    if (
-        error is not None
-        and error["retryable"]
-        and state["execution_retry_count"] < state["execution_max_retries"]
-    ):
-        return "retry"
-    return "finalize"
-
-
 def route_after_critic(state: AgentState) -> Literal["replan", "charts", "bailout"]:
     if state["critic_verdict"] == "pass":
         return "charts"
@@ -66,22 +59,33 @@ def route_after_chart_plan(state: AgentState) -> Literal["chart", "report"]:
     return "chart" if state["chart_plan"] is not None else "report"
 
 
+def route_after_grounding(
+    state: AgentState,
+) -> Literal["finalize", "retry", "sanitize"]:
+    if state["grounding_status"] == "valid":
+        return "finalize"
+    if state["grounding_retry_count"] < state["grounding_max_retries"]:
+        return "retry"
+    return "sanitize"
+
+
 def build_graph(checkpointer: BaseCheckpointSaver[Any] | None = None) -> Any:
     builder = StateGraph(AgentState)
     builder.add_node("planner", create_plan)
     builder.add_node("ask_user", ask_user)
     builder.add_node("clarification_bailout", bailout_clarification)
     builder.add_node("data_inspector", inspect_data)
-    builder.add_node("executor", execute_step)
-    builder.add_node("tool_router", choose_tool)
-    builder.add_node("fix_and_retry", fix_and_retry)
-    builder.add_node("finalize_step", finalize_step)
+    builder.add_node("run_executor_agent", run_executor_agent)
     builder.add_node("critic", review_evidence)
     builder.add_node("replan", create_additional_plan)
     builder.add_node("critic_bailout", bailout_after_critic)
     builder.add_node("chart_planner", plan_chart)
     builder.add_node("chart_creator", create_chart_node)
     builder.add_node("reporter", create_report)
+    builder.add_node("grounding_verifier", verify_report)
+    builder.add_node("prepare_grounding_retry", prepare_grounding_retry)
+    builder.add_node("sanitize_report", sanitize_report)
+    builder.add_node("finalize_report", finalize_report)
 
     builder.add_edge(START, "planner")
     builder.add_conditional_edges(
@@ -96,18 +100,11 @@ def build_graph(checkpointer: BaseCheckpointSaver[Any] | None = None) -> Any:
     )
     builder.add_edge("ask_user", "planner")
     builder.add_edge("clarification_bailout", "reporter")
-    builder.add_edge("data_inspector", "tool_router")
-    builder.add_edge("tool_router", "executor")
+    builder.add_edge("data_inspector", "run_executor_agent")
     builder.add_conditional_edges(
-        "executor",
-        route_after_sql,
-        {"retry": "fix_and_retry", "finalize": "finalize_step"},
-    )
-    builder.add_edge("fix_and_retry", "executor")
-    builder.add_conditional_edges(
-        "finalize_step",
+        "run_executor_agent",
         route_after_execution,
-        {"continue": "tool_router", "critic": "critic"},
+        {"continue": "run_executor_agent", "critic": "critic"},
     )
     builder.add_conditional_edges(
         "critic",
@@ -121,7 +118,7 @@ def build_graph(checkpointer: BaseCheckpointSaver[Any] | None = None) -> Any:
     builder.add_conditional_edges(
         "replan",
         route_after_replan,
-        {"execute": "tool_router", "report": "reporter"},
+        {"execute": "run_executor_agent", "report": "reporter"},
     )
     builder.add_edge("critic_bailout", "reporter")
     builder.add_conditional_edges(
@@ -130,7 +127,19 @@ def build_graph(checkpointer: BaseCheckpointSaver[Any] | None = None) -> Any:
         {"chart": "chart_creator", "report": "reporter"},
     )
     builder.add_edge("chart_creator", "reporter")
-    builder.add_edge("reporter", END)
+    builder.add_edge("reporter", "grounding_verifier")
+    builder.add_conditional_edges(
+        "grounding_verifier",
+        route_after_grounding,
+        {
+            "finalize": "finalize_report",
+            "retry": "prepare_grounding_retry",
+            "sanitize": "sanitize_report",
+        },
+    )
+    builder.add_edge("prepare_grounding_retry", "reporter")
+    builder.add_edge("sanitize_report", "finalize_report")
+    builder.add_edge("finalize_report", END)
     return builder.compile(checkpointer=checkpointer)
 
 

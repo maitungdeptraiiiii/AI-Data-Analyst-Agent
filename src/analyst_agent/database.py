@@ -33,6 +33,7 @@ def get_ingest_pool() -> ConnectionPool[Connection[Any]]:
         atexit.register(_ingest_pool.close)
     return _ingest_pool
 
+get_ingest_pool()
 
 @contextmanager
 def ingest_connection() -> Iterator[Connection[Any]]:
@@ -86,8 +87,7 @@ def infer_temporal_columns(frame: pd.DataFrame, minimum_success_ratio: float = 0
     for column in converted.columns:
         series = converted[column]
         if not _TEMPORAL_COLUMN.search(str(column)) or not (
-            pd.api.types.is_object_dtype(series.dtype)
-            or pd.api.types.is_string_dtype(series.dtype)
+            pd.api.types.is_object_dtype(series.dtype) or pd.api.types.is_string_dtype(series.dtype)
         ):
             continue
 
