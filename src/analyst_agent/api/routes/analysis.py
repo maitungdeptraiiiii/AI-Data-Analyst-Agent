@@ -42,8 +42,15 @@ def _get_samples() -> list[DatasetSampleItem]:
             description="Multi-category retail sales & profit data across regions",
             rows=21,
             columns=[
-                "date", "region", "category", "sub_category", "product_name",
-                "sales", "profit", "quantity", "discount"
+                "date",
+                "region",
+                "category",
+                "sub_category",
+                "product_name",
+                "sales",
+                "profit",
+                "quantity",
+                "discount",
             ],
         ),
         DatasetSampleItem(
@@ -72,7 +79,9 @@ async def _emit_event(job_id: str, event: ProgressEvent) -> None:
             await q.put(event)
 
 
-async def _run_agent_pipeline(job_id: str, thread_id: str, question: str, dataset_path: str) -> None:
+async def _run_agent_pipeline(
+    job_id: str, thread_id: str, question: str, dataset_path: str
+) -> None:
     job = _jobs[job_id]
     job["status"] = "running"
 
@@ -163,7 +172,7 @@ def get_sample_datasets() -> list[DatasetSampleItem]:
 async def start_analysis_endpoint(
     question: str = Form(...),
     dataset_name: str | None = Form(None),
-    file: UploadFile | None = File(None),
+    file: UploadFile | None = File(None),  # noqa: B008
 ) -> StartAnalysisResponse:
     """Start an end-to-end data analysis workflow."""
     if not question.strip():
@@ -189,7 +198,9 @@ async def start_analysis_endpoint(
             shutil.copyfileobj(file.file, buffer)
     elif dataset_name:
         # Match sample
-        matched = next((s for s in _get_samples() if s.id == dataset_name or s.path == dataset_name), None)
+        matched = next(
+            (s for s in _get_samples() if s.id == dataset_name or s.path == dataset_name), None
+        )
         if matched and Path(matched.path).exists():
             target_path = Path(matched.path).resolve()
         elif Path(dataset_name).exists():
@@ -246,7 +257,8 @@ async def stream_analysis_progress(job_id: str) -> StreamingResponse:
         try:
             # Yield initial state
             job = _jobs[job_id]
-            yield f"event: status\ndata: {json.dumps({'status': job['status'], 'job_id': job_id})}\n\n"
+            status_data = json.dumps({"status": job["status"], "job_id": job_id})
+            yield f"event: status\ndata: {status_data}\n\n"
 
             while True:
                 try:
@@ -331,7 +343,9 @@ async def resume_analysis_endpoint(
             job["error"] = str(exc)
             await _emit_event(
                 job_id,
-                ProgressEvent(event="error", status="failed", message=str(exc), timestamp=time.time()),
+                ProgressEvent(
+                    event="error", status="failed", message=str(exc), timestamp=time.time()
+                ),
             )
 
     asyncio.create_task(_resume_worker())

@@ -36,7 +36,9 @@ def run_evaluation(
             # Mock successful state matching common properties
             mock_state: dict[str, Any] = {
                 "question": question,
-                "planner_status": case.get("properties", {}).get("expected_planner_status", "ready"),
+                "planner_status": case.get("properties", {}).get(
+                    "expected_planner_status", "ready"
+                ),
                 "plan": ["Calculate monthly metrics", "Breakdown by category"],
                 "analysis_log": [
                     {
@@ -164,7 +166,8 @@ def main() -> None:
         baseline_path=baseline_path,
         mock_run=args.mock,
     )
-    print(f"\nEvaluation Complete! Total: {summary['total_cases']}, Passed: {summary['passed_cases']}, Pass Rate: {summary['pass_rate_pct']}%")
+    tot, pas, pct = summary["total_cases"], summary["passed_cases"], summary["pass_rate_pct"]
+    print(f"\nEvaluation Complete! Total: {tot}, Passed: {pas}, Pass Rate: {pct}%")
 
 
 if __name__ == "__main__":

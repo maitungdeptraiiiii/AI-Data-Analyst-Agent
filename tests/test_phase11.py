@@ -1,4 +1,3 @@
-
 from fastapi.testclient import TestClient
 
 from analyst_agent.api.app import app
@@ -40,7 +39,12 @@ def test_redact_ip_and_ssn() -> None:
 
 def test_redact_sample_rows_preserves_numeric_metrics() -> None:
     raw = [
-        {"customer": "Alice (alice@test.com)", "phone": "0988888888", "revenue": 50000.0, "units": 10},
+        {
+            "customer": "Alice (alice@test.com)",
+            "phone": "0988888888",
+            "revenue": 50000.0,
+            "units": 10,
+        },
         {"customer": "Bob", "phone": "0911111111", "revenue": 25000.0, "units": 5},
     ]
     redacted = redact_sample_rows(raw)

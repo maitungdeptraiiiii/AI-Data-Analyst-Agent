@@ -21,7 +21,9 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 def create_app() -> FastAPI:
     app = FastAPI(
         title="AI Data Analyst Agent API",
-        description="Production API for multi-agent data analytics with LangGraph and Redis Streams",
+        description=(
+            "Production API for multi-agent data analytics with LangGraph and Redis Streams"
+        ),
         version="0.1.0",
         lifespan=lifespan,
     )

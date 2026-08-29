@@ -1,10 +1,4 @@
-from pathlib import Path
-import sys
 from typing import Any
-
-_src_dir = str(Path(__file__).resolve().parent.parent / "src")
-if _src_dir not in sys.path:
-    sys.path.insert(0, _src_dir)
 
 from analyst_agent.grounding import verify_grounding
 from analyst_agent.state import AgentState, FinalReportData
@@ -52,9 +46,7 @@ def check_confidence_not_low(report: FinalReportData | None) -> tuple[bool, str]
     return True, f"Report confidence is {report.get('confidence')}"
 
 
-def check_min_findings(
-    report: FinalReportData | None, min_count: int = 1
-) -> tuple[bool, str]:
+def check_min_findings(report: FinalReportData | None, min_count: int = 1) -> tuple[bool, str]:
     if report is None:
         return False, "Report is missing"
     count = len(report.get("key_findings", []))
@@ -63,9 +55,7 @@ def check_min_findings(
     return True, f"Found {count} findings"
 
 
-def check_min_root_causes(
-    report: FinalReportData | None, min_count: int = 1
-) -> tuple[bool, str]:
+def check_min_root_causes(report: FinalReportData | None, min_count: int = 1) -> tuple[bool, str]:
     if report is None:
         return False, "Report is missing"
     count = len(report.get("root_causes", []))
@@ -97,9 +87,7 @@ def check_no_sql_executed(state: AgentState) -> tuple[bool, str]:
     return True, "No analysis steps were executed"
 
 
-def check_expected_planner_status(
-    state: AgentState, expected: str
-) -> tuple[bool, str]:
+def check_expected_planner_status(state: AgentState, expected: str) -> tuple[bool, str]:
     actual = state.get("planner_status")
     if expected == "ready_or_need_clarification":
         if actual in ("ready", "need_clarification"):
@@ -110,9 +98,7 @@ def check_expected_planner_status(
     return True, f"Planner status matched '{expected}'"
 
 
-def evaluate_properties(
-    properties: dict[str, Any], state: AgentState
-) -> dict[str, Any]:
+def evaluate_properties(properties: dict[str, Any], state: AgentState) -> dict[str, Any]:
     """Evaluate a dict of expected properties against the resulting agent state."""
     report = state.get("final_report") or state.get("draft_report")
     results: dict[str, dict[str, Any]] = {}

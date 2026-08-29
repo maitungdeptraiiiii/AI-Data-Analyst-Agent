@@ -44,7 +44,10 @@ class MemoryStore:
             conn.execute(
                 """
                 INSERT OR REPLACE INTO past_analyses
-                (id, dataset_hash, question, summary, key_findings, root_causes, confidence, created_at, metadata)
+                (
+                    id, dataset_hash, question, summary,
+                    key_findings, root_causes, confidence, created_at, metadata
+                )
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
@@ -65,7 +68,9 @@ class MemoryStore:
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.execute(
                 """
-                SELECT id, dataset_hash, question, summary, key_findings, root_causes, confidence, created_at, metadata
+                SELECT
+                    id, dataset_hash, question, summary,
+                    key_findings, root_causes, confidence, created_at, metadata
                 FROM past_analyses
                 WHERE dataset_hash = ?
                 ORDER BY created_at DESC
@@ -94,9 +99,7 @@ class MemoryStore:
     def cleanup_expired(self, ttl_seconds: float = 90 * 86400.0) -> int:
         cutoff = time.time() - ttl_seconds
         with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.execute(
-                "DELETE FROM past_analyses WHERE created_at < ?", (cutoff,)
-            )
+            cursor = conn.execute("DELETE FROM past_analyses WHERE created_at < ?", (cutoff,))
             conn.commit()
             return cursor.rowcount
 

@@ -9,9 +9,12 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     """Application settings loaded from environment variables or .env."""
 
-    llm_provider: Literal["anthropic", "openai"] = "openai"
+    llm_provider: Literal["anthropic", "openai", "gemini", "google", "groq"] = "groq"
     anthropic_api_key: SecretStr | None = None
     openai_api_key: SecretStr | None = None
+    gemini_api_key: SecretStr | None = None
+    google_api_key: SecretStr | None = None
+    groq_api_key: SecretStr | None = None
     llm_timeout_seconds: float = 60.0
     artifacts_dir: Path = Path("artifacts")
     checkpoint_db_path: Path = Path("data/checkpoints.sqlite")
@@ -31,10 +34,10 @@ class Settings(BaseSettings):
     tool_agent_consumer_group: str = "tool-agents"
     tool_agent_wait_timeout_seconds: float = 30.0
     tool_agent_visibility_timeout_ms: int = 30_000
-    planner_model: str = "gpt-4.1-mini"
-    executor_model: str = "gpt-4.1-mini"
-    critic_model: str = "gpt-4.1-mini"
-    reporter_model: str = "gpt-4.1-mini"
+    planner_model: str = "openai/gpt-oss-20b"
+    executor_model: str = "openai/gpt-oss-20b"
+    critic_model: str = "openai/gpt-oss-20b"
+    reporter_model: str = "openai/gpt-oss-20b"
     langsmith_api_key: SecretStr | None = None
     langsmith_tracing: bool = False
     langsmith_project: str = "ai-data-analyst-agent"
@@ -52,6 +55,16 @@ class Settings(BaseSettings):
             raise ValueError("ANTHROPIC_API_KEY is required when LLM_PROVIDER=anthropic")
         if self.llm_provider == "openai" and self.openai_api_key is None:
             raise ValueError("OPENAI_API_KEY is required when LLM_PROVIDER=openai")
+        if (
+            self.llm_provider in ("gemini", "google")
+            and self.gemini_api_key is None
+            and self.google_api_key is None
+        ):
+            raise ValueError(
+                "GEMINI_API_KEY or GOOGLE_API_KEY is required when LLM_PROVIDER=gemini"
+            )
+        if self.llm_provider == "groq" and self.groq_api_key is None:
+            raise ValueError("GROQ_API_KEY is required when LLM_PROVIDER=groq")
         if self.python_sandbox_timeout_seconds <= 0 or self.python_max_dataset_rows <= 0:
             raise ValueError("Python sandbox limits must be positive")
         self.sandbox_runs_dir.mkdir(parents=True, exist_ok=True)

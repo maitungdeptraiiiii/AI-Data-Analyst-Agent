@@ -26,9 +26,7 @@ def generate_eval_summary(eval_results: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
-def compare_with_baseline(
-    current_summary: dict[str, Any], baseline_path: Path
-) -> dict[str, Any]:
+def compare_with_baseline(current_summary: dict[str, Any], baseline_path: Path) -> dict[str, Any]:
     if not baseline_path.exists():
         return {
             "has_baseline": False,
@@ -51,7 +49,9 @@ def compare_with_baseline(
     }
 
 
-def format_summary_markdown(summary: dict[str, Any], comparison: dict[str, Any] | None = None) -> str:
+def format_summary_markdown(
+    summary: dict[str, Any], comparison: dict[str, Any] | None = None
+) -> str:
     lines = [
         "# AI Data Analyst Agent - Evaluation Summary Report\n",
         f"- **Total Test Cases**: {summary['total_cases']}",
@@ -60,8 +60,13 @@ def format_summary_markdown(summary: dict[str, Any], comparison: dict[str, Any] 
     ]
 
     if comparison and comparison.get("has_baseline"):
-        diff_str = f"+{comparison['diff_pct']}%" if comparison['diff_pct'] >= 0 else f"{comparison['diff_pct']}%"
-        lines.append(f"- **Baseline Comparison**: Baseline={comparison['baseline_pass_rate_pct']}%, Delta={diff_str}")
+        diff_str = (
+            f"+{comparison['diff_pct']}%"
+            if comparison["diff_pct"] >= 0
+            else f"{comparison['diff_pct']}%"
+        )
+        base_rate = comparison["baseline_pass_rate_pct"]
+        lines.append(f"- **Baseline Comparison**: Baseline={base_rate}%, Delta={diff_str}")
         if comparison.get("regression_detected"):
             lines.append("⚠️ **REGRESSION DETECTED**: Pass rate dropped significantly!")
         lines.append("")

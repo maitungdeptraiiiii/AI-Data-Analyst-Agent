@@ -28,6 +28,16 @@ MODEL_PRICING_PER_1M: dict[str, tuple[float, float]] = {
     "claude-3-5-sonnet": (3.00, 15.00),
     "claude-sonnet-5": (3.00, 15.00),
     "claude-3-opus": (15.00, 75.00),
+    # Google Gemini
+    "gemini-2.5-flash": (0.075, 0.30),
+    "gemini-2.0-flash": (0.10, 0.40),
+    "gemini-1.5-flash": (0.075, 0.30),
+    "gemini-1.5-pro": (1.25, 5.00),
+    # Groq Models
+    "openai/gpt-oss-20b": (0.075, 0.30),
+    "openai/gpt-oss-120b": (0.15, 0.60),
+    "qwen/qwen3.6-27b": (0.60, 3.00),
+    "qwen/qwen3.8-27b": (0.80, 4.00),
 }
 DEFAULT_PRICING: tuple[float, float] = (1.00, 3.00)
 
@@ -63,9 +73,7 @@ class TokenUsageTracker(BaseCallbackHandler):
             if response.llm_output:
                 usage = response.llm_output.get("token_usage") or response.llm_output.get("usage")
                 if usage:
-                    self.tokens_in += (
-                        usage.get("prompt_tokens") or usage.get("input_tokens") or 0
-                    )
+                    self.tokens_in += usage.get("prompt_tokens") or usage.get("input_tokens") or 0
                     self.tokens_out += (
                         usage.get("completion_tokens") or usage.get("output_tokens") or 0
                     )

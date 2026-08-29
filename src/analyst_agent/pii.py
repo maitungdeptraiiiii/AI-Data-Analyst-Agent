@@ -2,18 +2,12 @@ import re
 from typing import Any
 
 # Regex patterns for common sensitive identifiers
-_EMAIL_PATTERN = re.compile(
-    r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"
-)
-_CREDIT_CARD_PATTERN = re.compile(
-    r"\b(?:\d{4}[ -]?){3}\d{4}\b"
-)
+_EMAIL_PATTERN = re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b")
+_CREDIT_CARD_PATTERN = re.compile(r"\b(?:\d{4}[ -]?){3}\d{4}\b")
 _PHONE_PATTERN = re.compile(
     r"(?:\+?\d{1,3}[ -]?)?\(?\d{3}\)?[ -]?\d{3}[ -]?\d{4}\b|(?:\+84|0)(?:3|5|7|8|9)\d{8}\b"
 )
-_SSN_PATTERN = re.compile(
-    r"\b\d{3}-\d{2}-\d{4}\b"
-)
+_SSN_PATTERN = re.compile(r"\b\d{3}-\d{2}-\d{4}\b")
 _IP_PATTERN = re.compile(
     r"\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b"
 )

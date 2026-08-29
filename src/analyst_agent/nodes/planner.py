@@ -36,6 +36,7 @@ Use ready only with a non-empty plan.
 def create_plan(state: AgentState) -> dict[str, object]:
     model = create_chat_model("planner").with_structured_output(PlannerOutput)
     from analyst_agent.memory.retriever import format_memory_context, retrieve_relevant_memory
+
     memories = retrieve_relevant_memory(state["dataset_path"])
     memory_context = format_memory_context(memories)
 
