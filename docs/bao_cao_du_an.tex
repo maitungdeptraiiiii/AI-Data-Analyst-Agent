@@ -330,9 +330,16 @@ class _GroqJsonSchemaChat(ChatGroq):
 \subsection{Kết quả Kiểm thử Đơn vị (Unit Testing)}
 Toàn bộ hệ thống được bảo vệ bởi bộ kiểm thử tự động với \textbf{116 test cases} (Bảng~\ref{tab:test_phases}). Tất cả đều đạt tỷ lệ thành công 100\%.
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{output/fig_pytest_result.png}
+\caption{Ảnh chụp màn hình terminal kết quả chạy pytest tests/ với 116/116 test cases pass}
+\label{fig:pytest_result}
+\end{figure}
+
 \begin{table}[H]
 \centering
-\caption{Kết quả kiểm thử tự động 13 Modules (116/116 Tests Passed)}
+\caption{Kết quả kiểm thử tự động 13 Modules (117/117 Tests Passed)}
 \label{tab:test_phases}
 \begin{tabularx}{\textwidth}{clcX}
 \toprule
@@ -344,7 +351,7 @@ Toàn bộ hệ thống được bảo vệ bởi bộ kiểm thử tự động
 4 & \texttt{test\_phase4.py} & 12 & Executor Agent Subgraph, Tool Routing, Redis Streams \\
 5 & \texttt{test\_phase5.py} & 3 & Critic Node, Đánh giá bằng chứng, Replan Loop \\
 6 & \texttt{test\_phase6.py} & 9 & Python Sandbox, AST Guard Policy \\
-7 & \texttt{test\_phase7.py} & 10 & Chart Planner, Matplotlib Rendering \\
+7 & \texttt{test\_phase7.py} & 11 & Chart Planner, Matplotlib Rendering, Ranking Grounding \\
 8 & \texttt{test\_phase8.py} & 12 & Reporter Node, Deterministic Grounding Verifier \\
 8b & \texttt{test\_phase8b.py} & 11 & Full Graph Integration, HITL Interrupt \& Resume \\
 9 & \texttt{test\_phase9.py} & 8 & Token Counting, Chi phí USD, Tracing \\
@@ -352,16 +359,30 @@ Toàn bộ hệ thống được bảo vệ bởi bộ kiểm thử tự động
 11 & \texttt{test\_phase11.py} & 10 & FastAPI Endpoints, SSE Streaming, PII Redaction \\
 12 & \texttt{test\_phase12.py} & 5 & SQLite Memory Store, Retriever, TTL Cleanup \\
 \midrule
-\textbf{Tổng} & & \textbf{116} & \textbf{100\% Passed in 3.5s} \\
+\textbf{Tổng} & & \textbf{117} & \textbf{100\% Passed in 3.5s} \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
 \subsection{Đánh giá Chất lượng Mã nguồn (Code Quality)}
 \begin{itemize}
-    \item \textbf{Type Checking (mypy):} Chạy ở chế độ nghiêm ngặt (\texttt{--strict}) trên toàn bộ 48 tệp mã nguồn: \textit{Success: no issues found in 48 source files}.
+    \item \textbf{Type Checking (mypy):} Chạy ở chế độ nghiêm ngặt (\texttt{--strict}) trên toàn bộ 56 tệp mã nguồn: \textit{Success: no issues found in 56 source files}.
     \item \textbf{Linting \& Formatting (ruff):} Tuân thủ nghiêm ngặt chuẩn PEP 8 và các quy tắc Flake8, pyupgrade, isort (0 cảnh báo).
 \end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{output/fig_mypy_result.png}
+\caption{Ảnh chụp màn hình terminal kết quả chạy mypy --strict (0 lỗi) và ruff check (0 cảnh báo)}
+\label{fig:mypy_result}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{output/fig_sample_chart.png}
+\caption{Ảnh chụp một biểu đồ Matplotlib mẫu tỷ lệ 4:3 do hệ thống tự sinh kèm chú thích trục}
+\label{fig:sample_chart}
+\end{figure}
 
 \subsection{Đánh giá Chuyên sâu: Hệ thống Benchmark 6 Trụ cột}
 Để kiểm chứng toàn diện năng lực của AI Agent, đồ án đã hiện thực hóa trọn vẹn bộ công cụ đánh giá 6 trụ cột trong thư mục \texttt{eval/} (Bảng~\ref{tab:benchmarks_comparison}).

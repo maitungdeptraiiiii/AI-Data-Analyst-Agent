@@ -10,7 +10,7 @@ from pydantic import BaseModel
 
 from analyst_agent.config import get_settings
 
-ModelRole = Literal["planner", "executor", "critic", "reporter"]
+ModelRole = Literal["planner", "executor", "critic", "reporter", "verifier"]
 
 
 class _GroqJsonSchemaChat(ChatGroq):

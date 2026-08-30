@@ -4,8 +4,6 @@
 - **Passed**: 30
 - **Pass Rate**: 100.0%
 
-- **Baseline Comparison**: Baseline=93.33%, Delta=+6.67%
-
 ## Results by Category
 
 | Category | Total | Passed | Pass Rate |

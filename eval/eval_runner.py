@@ -44,7 +44,9 @@ def run_evaluation(
 
         if mock_run:
             expected_status = properties.get("expected_planner_status", "ready")
-            actual_status = "ready" if expected_status == "ready_or_need_clarification" else expected_status
+            actual_status = (
+                "ready" if expected_status == "ready_or_need_clarification" else expected_status
+            )
 
             min_f = properties.get("min_findings", 1)
             min_rc = properties.get("min_root_causes", 1)
@@ -99,7 +101,9 @@ def run_evaluation(
                     "summary": f"Analysis for: {question}",
                     "key_findings": findings if not is_off_topic else [],
                     "root_causes": root_causes if not is_off_topic else [],
-                    "recommendations": ["Expand high-performing categories"] if not is_off_topic else [],
+                    "recommendations": ["Expand high-performing categories"]
+                    if not is_off_topic
+                    else [],
                     "confidence": "high" if not is_off_topic else "low",
                     "limitations": [],
                 },

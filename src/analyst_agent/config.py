@@ -38,6 +38,7 @@ class Settings(BaseSettings):
     executor_model: str = "openai/gpt-oss-20b"
     critic_model: str = "openai/gpt-oss-20b"
     reporter_model: str = "openai/gpt-oss-20b"
+    verifier_model: str = "openai/gpt-oss-20b"
     langsmith_api_key: SecretStr | None = None
     langsmith_tracing: bool = False
     langsmith_project: str = "ai-data-analyst-agent"

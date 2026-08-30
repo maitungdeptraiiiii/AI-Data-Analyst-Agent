@@ -17,6 +17,9 @@ a single-row result exposes each column directly (e.g. "revenue"); a breakdown r
 category) exposes "{column}__{category}" per row (e.g. "revenue__2026_07"). Only cite metric names
 that literally appear in that step's metrics object. Summary must not introduce new numbers or
 causes. Recommendations are suggestions, not observed facts. Reply in the user's language.
+When making comparative or ranking claims (e.g. 'ranks second', 'highest', 'lowest', 'top',
+'bottom'), you MUST strictly inspect all rows in the cited step to verify the actual rank.
+Never claim an entity ranks second if its value is the highest among all rows in the evidence.
 Do not invent chart paths; application code supplies them after generation.
 If the supplied chart list is non-empty, at least one chart was already generated: reference what
 it shows in the summary or findings, and do not claim in limitations that no chart is available.

@@ -1,0 +1,50 @@
+$ mypy --strict src eval
+src/analyst_agent/grounding.py:87: error: Argument 1 to "float" has incompatible type "object"; expected "str | Buffer | SupportsFloat | SupportsIndex"  [arg-type]
+Found 1 error in 1 file (checked 56 source files)
+
+$ ruff check src tests eval
+E501 Line too long (113 > 100)
+   --> src/analyst_agent/grounding.py:109:101
+    |
+107 |                             "ranking_contradiction",
+108 |                             f"Claimed rank '{label}' for '{matched_entity}' on '{target_col}', "
+109 |                             f"but actual rank in cited step '{step_id}' is {actual_rank} (value: {actual_val}).",
+    |                                                                                                     ^^^^^^^^^^^^^
+110 |                         )
+111 |                     )
+    |
+
+E501 Line too long (102 > 100)
+  --> src/analyst_agent/nodes/reporter.py:20:101
+   |
+18 | that literally appear in that step's metrics object. Summary must not introduce new numbers or
+19 | causes. Recommendations are suggestions, not observed facts. Reply in the user's language.
+20 | When making comparative or ranking claims (e.g. 'ranks second', 'highest', 'lowest', 'top', 'bottom'),
+   |                                                                                                     ^^
+21 | you MUST strictly inspect all rows in the cited step to verify the actual rank. Never claim an entity
+22 | ranks second if its value is the highest among all rows in the evidence.
+   |
+
+E501 Line too long (101 > 100)
+  --> src/analyst_agent/nodes/reporter.py:21:101
+   |
+19 | causes. Recommendations are suggestions, not observed facts. Reply in the user's language.
+20 | When making comparative or ranking claims (e.g. 'ranks second', 'highest', 'lowest', 'top', 'bottom'),
+21 | you MUST strictly inspect all rows in the cited step to verify the actual rank. Never claim an entity
+   |                                                                                                     ^
+22 | ranks second if its value is the highest among all rows in the evidence.
+23 | Do not invent chart paths; application code supplies them after generation.
+   |
+
+E501 Line too long (113 > 100)
+   --> tests/test_phase7.py:129:101
+    |
+127 |             key_findings=[
+128 |                 Finding(
+129 |                     claim="West region's Office Supplies category ranks second in profit margin among all pairs",
+    |                                                                                                     ^^^^^^^^^^^^^
+130 |                     citation_step_ids=["step_1"],
+131 |                     numeric_claims=[],
+    |
+
+Found 4 errors.

@@ -10,7 +10,7 @@
 [![PostgreSQL 16](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)](https://postgresql.org)
 [![Redis Streams](https://img.shields.io/badge/Redis-Streams_Bus-DC382D?logo=redis&logoColor=white)](https://redis.io)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)](https://docker.com)
-[![Tests](https://img.shields.io/badge/Tests-116%20passed-brightgreen?logo=pytest&logoColor=white)](#-testing)
+[![Tests](https://img.shields.io/badge/Tests-117%20passed-brightgreen?logo=pytest&logoColor=white)](#-testing)
 
 *An end-to-end AI agent that takes a natural-language question about a CSV dataset and produces a fully verified analytical report — with SQL/Python evidence, automated chart generation, root cause analysis, and actionable recommendations.*
 
@@ -83,9 +83,10 @@ The agent doesn't guess — it **plans**, **executes** structured queries, **cri
 | **Tier 2** | Executor Agent (subgraph-as-node) | Per-step execution with local retry & error classification |
 | **Tier 3** | Tool Agents (SQL/Python workers) | Isolated code execution via Redis Streams |
 
-### 🔍 Deterministic Grounding Verification
+### 🔍 Deterministic & Semantic Grounding Verification
 - Every finding and root cause must cite a specific analysis step ID
 - Numeric claims verified against actual query metrics with 1% tolerance
+- **Ranking & Superlative Grounding:** Detects and flags logical contradictions in ordinal claims (e.g. claiming "ranks second" when the evidence shows rank 1)
 - Invalid claims auto-removed — **zero hallucination guarantee in final report**
 - Two retry rounds before fallback sanitization
 
@@ -594,14 +595,14 @@ mypy src
 | 4 | `test_phase4.py` | 12 | Executor Agent, tool routing, Redis Streams |
 | 5 | `test_phase5.py` | 3 | Critic node, verdict routing |
 | 6 | `test_phase6.py` | 9 | Python sandbox, AST policy guard |
-| 7 | `test_phase7.py` | 10 | Chart planner, Matplotlib renderer |
+| 7 | `test_phase7.py` | 11 | Chart planner, Matplotlib renderer, ranking grounding |
 | 8 | `test_phase8.py` | 12 | Reporter, grounding verifier, sanitization |
 | 8b | `test_phase8b.py` | 11 | Full graph integration, interrupt/resume |
 | 9 | `test_phase9.py` | 8 | Observability, token counting, cost estimation |
 | 10 | `test_phase10.py` | 7 | Evaluation harness, golden dataset, reports |
 | 11 | `test_phase11.py` | 10 | Web API, SSE streaming, PII redaction, CORS |
 | 12 | `test_phase12.py` | 5 | Memory store, retriever, TTL cleanup |
-| **Total** | | **116** | |
+| **Total** | | **117** | |
 
 ### Quality Assurance
 
@@ -706,7 +707,7 @@ The following preliminary results were obtained across the 30 Golden Test Cases:
 
 | Benchmark Dimension | Measured Result | Benchmark Standard / Baseline | Status |
 |---|---|---|---|
-| **Unit Test Pass Rate** | **100% (116 / 116 tests)** | pytest $\ge 95\%$ | ✅ **Exceeded** |
+| **Unit Test Pass Rate** | **100% (117 / 117 tests)** | pytest $\ge 95\%$ | ✅ **Exceeded** |
 | **Type Checking (mypy)** | **0 errors (56 files)** | mypy strict mode | ✅ **Exceeded** |
 | **Deterministic Grounding** | **100.0% Valid Citations** | Zero Hallucination Standard | ✅ **Exceeded** |
 | **Numeric Precision** | **$\le 1.0\%$ Error Tolerance** | Exact Grounding Constraint | ✅ **Exceeded** |
