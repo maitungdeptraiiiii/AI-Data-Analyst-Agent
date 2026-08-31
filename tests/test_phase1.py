@@ -32,6 +32,28 @@ def test_settings_accept_openai_as_selected_provider() -> None:
     assert settings.llm_provider == "openai"
 
 
+def test_settings_accept_gemini_as_selected_provider() -> None:
+    settings = Settings(
+        llm_provider="gemini",
+        gemini_api_key="test-key",
+        postgres_ingest_dsn="postgresql://ingest",
+        postgres_executor_dsn="postgresql://executor",
+        planner_model="gemini-2.5-flash",
+    )
+    assert settings.llm_provider == "gemini"
+
+
+def test_settings_accept_groq_as_selected_provider() -> None:
+    settings = Settings(
+        llm_provider="groq",
+        groq_api_key="test-key",
+        postgres_ingest_dsn="postgresql://ingest",
+        postgres_executor_dsn="postgresql://executor",
+        planner_model="openai/gpt-oss-20b",
+    )
+    assert settings.llm_provider == "groq"
+
+
 def test_settings_require_key_for_selected_provider() -> None:
     with pytest.raises(ValidationError, match="OPENAI_API_KEY"):
         Settings(

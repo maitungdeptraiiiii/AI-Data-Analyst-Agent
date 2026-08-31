@@ -43,6 +43,7 @@ def dispatch_tool(state: ExecutorAgentState) -> dict[str, object]:
         "previous_code": state["code"],
         "previous_purpose": state["purpose"],
         "previous_error": previous_error["message"] if previous_error else None,
+        "trace_id": task.get("run_id"),
     }
     streams.publish_tool_task(tool_choice, tool_task)
     message = streams.await_tool_result(correlation_id, state["wait_timeout_sec"])

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Data Analyst Agent — Enterprise Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <!-- Background Glow FX -->
+  <div class="glow-sphere sphere-1"></div>
+  <div class="glow-sphere sphere-2"></div>
+
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="logo-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+          </svg>
+        </div>
+        <div>
+          <h1 class="brand-title">AI Data Analyst Agent</h1>
+          <p class="brand-subtitle">Multi-Agent Orchestration • Deterministic Grounding</p>
+        </div>
+      </div>
+      <div class="header-badges">
+        <span class="badge badge-pulse"><span class="pulse-dot"></span> LangGraph 3-Tier</span>
+        <span class="badge badge-purple">Redis Streams Bus</span>
+        <span class="badge badge-green">Zero Hallucination Verifier</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <!-- Top Configuration & Query Panel -->
+    <section class="glass-card query-card">
+      <h2 class="section-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        1. Chọn bộ dữ liệu & Yêu cầu phân tích
+      </h2>
+
+      <!-- Sample Dataset Selector -->
+      <div class="dataset-presets" id="datasetPresets">
+        <label class="preset-label">Bộ dữ liệu mẫu sẵn có:</label>
+        <div class="preset-cards-grid" id="presetGrid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Upload or Custom CSV -->
+      <div class="upload-zone" id="dropZone">
+        <input type="file" id="csvFileInput" accept=".csv" class="hidden-input" />
+        <div class="upload-content">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          <p class="upload-text">Kéo thả file CSV vào đây hoặc <span class="upload-browse">chọn file từ máy</span></p>
+          <span class="upload-subtext" id="selectedFileName">Hỗ trợ định dạng .CSV (Tối đa 50MB)</span>
+        </div>
+      </div>
+
+      <!-- Query input with suggestions -->
+      <div class="query-input-group">
+        <label for="questionInput" class="input-label">Câu hỏi hoặc mục tiêu phân tích:</label>
+        <div class="textarea-wrapper">
+          <textarea id="questionInput" rows="3" placeholder="Ví dụ: Phân tích nguyên nhân doanh thu tháng 7 giảm, so sánh các danh mục và vẽ biểu đồ xu hướng..."></textarea>
+          <button id="btnStartAnalysis" class="btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            Bắt đầu phân tích
+          </button>
+        </div>
+        <div class="prompt-pills">
+          <span class="pill-label">Gợi ý nhanh:</span>
+          <button class="pill-btn" data-query="Tính tổng doanh thu và lợi nhuận theo từng tháng trong năm 2026">Xu hướng doanh thu theo tháng</button>
+          <button class="pill-btn" data-query="Tại sao lợi nhuận tháng 7 bị giảm sút nghiêm trọng? Tìm nguyên nhân gốc rễ.">Phân tích nguyên nhân lợi nhuận giảm tháng 7</button>
+          <button class="pill-btn" data-query="So sánh hiệu quả bán hàng giữa các khu vực và ngành hàng">So sánh khu vực & ngành hàng</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pipeline Visualizer -->
+    <section class="glass-card pipeline-card">
+      <div class="pipeline-header">
+        <h2 class="section-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+          2. Tiến trình xử lý đa tác nhân (Multi-Agent Pipeline)
+        </h2>
+        <div class="live-metrics" id="liveMetrics">
+          <span class="metric-item"><span class="metric-label">Thời gian:</span> <strong id="timerDisplay">0.0s</strong></span>
+          <span class="metric-item"><span class="metric-label">Tokens:</span> <strong id="tokenDisplay">0</strong></span>
+          <span class="metric-item"><span class="metric-label">Ước tính chi phí:</span> <strong id="costDisplay">$0.0000</strong></span>
+        </div>
+      </div>
+
+      <div class="pipeline-flow" id="pipelineFlow">
+        <div class="node-item" id="node_planner">
+          <div class="node-icon">🧠</div>
+          <div class="node-title">Planner</div>
+          <div class="node-status">Sẵn sàng</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="node-item" id="node_inspector">
+          <div class="node-icon">🔍</div>
+          <div class="node-title">Inspector</div>
+          <div class="node-status">Chờ file</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="node-item" id="node_executor">
+          <div class="node-icon">⚡</div>
+          <div class="node-title">Tool Agent (SQL/Python)</div>
+          <div class="node-status">Chờ lệnh</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="node-item" id="node_critic">
+          <div class="node-icon">⚖️</div>
+          <div class="node-title">Critic</div>
+          <div class="node-status">Đánh giá</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="node-item" id="node_chart">
+          <div class="node-icon">📊</div>
+          <div class="node-title">Charts</div>
+          <div class="node-status">Trực quan</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="node-item" id="node_reporter">
+          <div class="node-icon">📝</div>
+          <div class="node-title">Reporter</div>
+          <div class="node-status">Soạn thảo</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="node-item" id="node_verifier">
+          <div class="node-icon">🛡️</div>
+          <div class="node-title">Grounding Verifier</div>
+          <div class="node-status">Kiểm chứng số liệu</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Execution Trace & Step Log -->
+    <section class="glass-card steps-card" id="stepsSection">
+      <h2 class="section-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+        3. Lịch sử thực thi truy vấn & mã nguồn (Analysis Audit Log)
+      </h2>
+      <div id="stepsContainer" class="steps-container">
+        <p class="empty-state">Chưa có bước phân tích nào được thực thi.</p>
+      </div>
+    </section>
+
+    <!-- Final Verified Report -->
+    <section class="glass-card report-card" id="reportSection">
+      <div class="report-header">
+        <h2 class="section-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          4. Báo cáo phân tích chuyên sâu & Kiểm chứng độ tin cậy
+        </h2>
+        <div class="confidence-badge" id="confidenceBadge">
+          <span class="shield-icon">🛡️</span> Verified Grounding
+        </div>
+      </div>
+
+      <div id="reportContent" class="report-body">
+        <p class="empty-state">Báo cáo sẽ hiển thị tại đây sau khi hoàn tất toàn bộ chu trình phân tích.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Clarification Modal (Human-In-The-Loop) -->
+  <div class="modal-overlay" id="clarificationModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-icon">❓</div>
+        <h3>Yêu cầu làm rõ thông tin (Human-in-the-loop)</h3>
+      </div>
+      <p class="modal-desc" id="modalQuestionText">Agent cần thêm thông tin để tiếp tục phân tích.</p>
+      <div class="modal-input-wrap">
+        <input type="text" id="modalAnswerInput" placeholder="Nhập câu trả lời của bạn..." />
+      </div>
+      <div class="modal-actions">
+        <button id="btnSubmitClarification" class="btn-primary">Gửi & Tiếp tục phân tích</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="app-footer">
+    <p>AI Data Analyst Agent • Production Multi-Agent Architecture • Built with LangGraph, PostgreSQL & Redis</p>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>

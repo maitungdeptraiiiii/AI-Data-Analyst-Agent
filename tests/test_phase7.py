@@ -103,6 +103,48 @@ def test_grounding_rejects_mismatch_missing_and_unregistered_numbers() -> None:
     }
 
 
+def test_grounding_rejects_ranking_contradictions() -> None:
+    ranking_step: AnalysisStep = {
+        "step_id": "step_1",
+        "instruction": "Calculate profit margin by region and category",
+        "tool": "sql",
+        "code": "SELECT region, category, profit_margin FROM sales",
+        "rows": [
+            {"region": "West", "category": "Office Supplies", "profit_margin": 0.233},
+            {"region": "West", "category": "Technology", "profit_margin": 0.208},
+            {"region": "East", "category": "Office Supplies", "profit_margin": 0.170},
+        ],
+        "metrics": {"profit_margin__West__Office_Supplies": 0.233},
+        "success": True,
+        "error": None,
+        "attempts": [],
+    }
+
+    hallucinated_report = cast(
+        FinalReportData,
+        FinalReport(
+            summary="Ranking analysis",
+            key_findings=[
+                Finding(
+                    claim=(
+                        "West region's Office Supplies category ranks second in profit margin "
+                        "among all pairs"
+                    ),
+                    citation_step_ids=["step_1"],
+                    numeric_claims=[],
+                )
+            ],
+            root_causes=[],
+            recommendations=[],
+            confidence="high",
+            limitations=[],
+        ).model_dump(),
+    )
+
+    violations = verify_grounding(hallucinated_report, [ranking_step])
+    assert any(item["code"] == "ranking_contradiction" for item in violations)
+
+
 def test_non_finite_values_are_not_exposed_as_metrics() -> None:
     assert extract_metrics([{"nan": float("nan"), "infinity": float("inf")}]) == {}
 

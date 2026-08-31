@@ -33,7 +33,9 @@ def get_ingest_pool() -> ConnectionPool[Connection[Any]]:
         atexit.register(_ingest_pool.close)
     return _ingest_pool
 
+
 get_ingest_pool()
+
 
 @contextmanager
 def ingest_connection() -> Iterator[Connection[Any]]:
@@ -184,8 +186,10 @@ def inspect_dataset(table_name: str, sample_size: int = 5) -> DatasetInfo:
         if cursor.description is None:
             raise RuntimeError("PostgreSQL did not return sample row metadata")
         names = [description.name for description in cursor.description]
-        # TODO Phase 11: redact PII before sample rows enter LLM context.
-        sample_rows = [dict(zip(names, row, strict=True)) for row in cursor.fetchall()]
+        raw_rows = [dict(zip(names, row, strict=True)) for row in cursor.fetchall()]
+        from analyst_agent.pii import redact_sample_rows
+
+        sample_rows = redact_sample_rows(raw_rows)
 
     return {
         "table_name": f"{ANALYSIS_SCHEMA}.{table_name}",

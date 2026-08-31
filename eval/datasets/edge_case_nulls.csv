@@ -1,0 +1,6 @@
+id,customer_name,country,order_date,amount,discount_code
+1,Alice,Vietnam,2026-05-01,150.5,SUMMER10
+2,Bob,,2026-05-02,200.0,
+3,,Singapore,2026-05-03,,VIP20
+4,David,Malaysia,2026-05-04,320.0,
+5,Eve,Vietnam,2026-05-05,0.0,FREE

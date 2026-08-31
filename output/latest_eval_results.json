@@ -1,0 +1,541 @@
+{
+  "total_cases": 30,
+  "passed_cases": 30,
+  "pass_rate_pct": 100.0,
+  "by_category": {
+    "trend": {
+      "total": 5,
+      "passed": 5
+    },
+    "root_cause": {
+      "total": 5,
+      "passed": 5
+    },
+    "breakdown": {
+      "total": 4,
+      "passed": 4
+    },
+    "outlier": {
+      "total": 3,
+      "passed": 3
+    },
+    "clarification": {
+      "total": 3,
+      "passed": 3
+    },
+    "off_topic": {
+      "total": 3,
+      "passed": 3
+    },
+    "edge_case": {
+      "total": 3,
+      "passed": 3
+    },
+    "multi_step": {
+      "total": 3,
+      "passed": 3
+    },
+    "stress": {
+      "total": 1,
+      "passed": 1
+    }
+  },
+  "results": [
+    {
+      "id": "trend_01_monthly_revenue",
+      "category": "trend",
+      "question": "Tính tổng doanh thu và lợi nhuận theo từng tháng",
+      "passed": true,
+      "details": {
+        "min_plan_steps": {
+          "passed": true,
+          "message": "Plan contains 1 steps"
+        },
+        "all_citations_valid": {
+          "passed": true,
+          "message": "All citations valid"
+        },
+        "all_numeric_claims_match": {
+          "passed": true,
+          "message": "All numeric claims match"
+        },
+        "no_blocked_tool_calls": {
+          "passed": true,
+          "message": "No blocked tool calls"
+        },
+        "confidence_not_low": {
+          "passed": true,
+          "message": "Report confidence is high"
+        }
+      }
+    },
+    {
+      "id": "trend_02_q1_vs_q2",
+      "category": "trend",
+      "question": "So sánh doanh thu giữa Quý 1 và Quý 2 năm 2026",
+      "passed": true,
+      "details": {
+        "min_plan_steps": {
+          "passed": true,
+          "message": "Plan contains 1 steps"
+        },
+        "all_citations_valid": {
+          "passed": true,
+          "message": "All citations valid"
+        },
+        "confidence_not_low": {
+          "passed": true,
+          "message": "Report confidence is high"
+        }
+      }
+    },
+    {
+      "id": "trend_03_growth_rate",
+      "category": "trend",
+      "question": "Tốc độ tăng trưởng doanh thu tháng 8 so với tháng 7 là bao nhiêu?",
+      "passed": true,
+      "details": {
+        "min_plan_steps": {
+          "passed": true,
+          "message": "Plan contains 1 steps"
+        },
+        "all_citations_valid": {
+          "passed": true,
+          "message": "All citations valid"
+        },
+        "all_numeric_claims_match": {
+          "passed": true,
+          "message": "All numeric claims match"
+        }
+      }
+    },
+    {
+      "id": "trend_04_six_month_trend",
+      "category": "trend",
+      "question": "Phân tích xu hướng bán hàng trong 6 tháng đầu năm 2026",
+      "passed": true,
+      "details": {
+        "all_citations_valid": {
+          "passed": true,
+          "message": "All citations valid"
+        },
+        "min_findings": {
+          "passed": true,
+          "message": "Found 1 findings"
+        }
+      }
+    },
+    {
+      "id": "trend_05_quarterly_profit",
+      "category": "trend",
+      "question": "Biến động lợi nhuận từ tháng 1 đến tháng 8 năm 2026",
+      "passed": true,
+      "details": {
+        "all_citations_valid": {
+          "passed": true,
+          "message": "All citations valid"
+        },
+        "confidence_not_low": {
+          "passed": true,
+          "message": "Report confidence is high"
+        }
+      }
+    },
+    {
+      "id": "root_cause_01_july_drop",
+      "category": "root_cause",
+      "question": "Tại sao lợi nhuận tháng 7 bị giảm sút nghiêm trọng? Tìm nguyên nhân gốc rễ.",
+      "passed": true,
+      "details": {
+        "min_plan_steps": {
+          "passed": true,
+          "message": "Plan contains 2 steps"
+        },
+        "all_citations_valid": {
+          "passed": true,
+          "message": "All citations valid"
+        },
+        "min_root_causes": {
+          "passed": true,
+          "message": "Found 1 root causes"
+        },
+        "has_recommendations": {
+          "passed": true,
+          "message": "Found 1 recommendations"
+        }
+      }
+    },
+    {
+      "id": "root_cause_02_negative_profit",
+      "category": "root_cause",
+      "question": "Những đơn hàng nào có lợi nhuận âm và lý do vì sao?",
+      "passed": true,
+      "details": {
+        "all_citations_valid": {
+          "passed": true,
+          "message": "All citations valid"
+        },
+        "min_findings": {
+          "passed": true,
+          "message": "Found 1 findings"
+        }
+      }
+    },
+    {
+      "id": "root_cause_03_discount_impact",
+      "category": "root_cause",
+      "question": "Mức chiết khấu cao có phải là nguyên nhân làm giảm lợi nhuận không?",
+      "passed": true,
+      "details": {
+        "all_citations_valid": {
+          "passed": true,
+          "message": "All citations valid"
+        },
+        "min_findings": {
+          "passed": true,
+          "message": "Found 1 findings"
+        }
+      }
+    },
+    {
+      "id": "root_cause_04_central_region",
+      "category": "root_cause",
+      "question": "Tại sao khu vực Central có lợi nhuận âm trong tháng 7?",
+      "passed": true,
+      "details": {
+        "all_citations_valid": {
+          "passed": true,
+          "message": "All citations valid"
+        },
+        "min_root_causes": {
+          "passed": true,
+          "message": "Found 1 root causes"
+        }
+      }
+    },
+    {
+      "id": "root_cause_05_category_loss",
+      "category": "root_cause",
+      "question": "Danh mục sản phẩm nào đang gây lỗ nhiều nhất và tại sao?",
+      "passed": true,
+      "details": {
+        "all_citations_valid": {
+          "passed": true,
+          "message": "All citations valid"
+        },
+        "has_recommendations": {
+          "passed": true,
+          "message": "Found 1 recommendations"
+        }
+      }
+    },
+    {
+      "id": "breakdown_01_region_sales",
+      "category": "breakdown",
+      "question": "Phân tích cơ cấu doanh thu theo từng vùng miền",
+      "passed": true,
+      "details": {
+        "all_citations_valid": {
+          "passed": true,
+          "message": "All citations valid"
+        },
+        "min_findings": {
+          "passed": true,
+          "message": "Found 1 findings"
+        }
+      }
+    },
+    {
+      "id": "breakdown_02_category_revenue",
+      "category": "breakdown",
+      "question": "Doanh thu và tỷ trọng của từng ngành hàng (Category)",
+      "passed": true,
+      "details": {
+        "all_citations_valid": {
+          "passed": true,
+          "message": "All citations valid"
+        },
+        "all_numeric_claims_match": {
+          "passed": true,
+          "message": "All numeric claims match"
+        }
+      }
+    },
+    {
+      "id": "breakdown_03_subcategory_performance",
+      "category": "breakdown",
+      "question": "Top 3 sub-category mang lại doanh thu cao nhất",
+      "passed": true,
+      "details": {
+        "all_citations_valid": {
+          "passed": true,
+          "message": "All citations valid"
+        },
+        "min_findings": {
+          "passed": true,
+          "message": "Found 1 findings"
+        }
+      }
+    },
+    {
+      "id": "breakdown_04_region_and_category",
+      "category": "breakdown",
+      "question": "So sánh doanh thu của Technology giữa khu vực North và South",
+      "passed": true,
+      "details": {
+        "all_citations_valid": {
+          "passed": true,
+          "message": "All citations valid"
+        }
+      }
+    },
+    {
+      "id": "outlier_01_high_discount",
+      "category": "outlier",
+      "question": "Tìm các đơn hàng có mức chiết khấu từ 30% trở lên",
+      "passed": true,
+      "details": {
+        "all_citations_valid": {
+          "passed": true,
+          "message": "All citations valid"
+        },
+        "min_findings": {
+          "passed": true,
+          "message": "Found 1 findings"
+        }
+      }
+    },
+    {
+      "id": "outlier_02_loss_orders",
+      "category": "outlier",
+      "question": "Có đơn hàng nào bị lỗ trên 100 USD không?",
+      "passed": true,
+      "details": {
+        "all_citations_valid": {
+          "passed": true,
+          "message": "All citations valid"
+        }
+      }
+    },
+    {
+      "id": "outlier_03_high_sales_volume",
+      "category": "outlier",
+      "question": "Đơn hàng nào có giá trị doanh thu lớn nhất trong năm 2026?",
+      "passed": true,
+      "details": {
+        "all_citations_valid": {
+          "passed": true,
+          "message": "All citations valid"
+        },
+        "all_numeric_claims_match": {
+          "passed": true,
+          "message": "All numeric claims match"
+        }
+      }
+    },
+    {
+      "id": "clarification_01_vague_request",
+      "category": "clarification",
+      "question": "Phân tích dữ liệu đi",
+      "passed": true,
+      "details": {
+        "expected_planner_status": {
+          "passed": true,
+          "message": "Planner status is valid (ready)"
+        }
+      }
+    },
+    {
+      "id": "clarification_02_ambiguous_entity",
+      "category": "clarification",
+      "question": "Chỉ số XYZ hôm nay thế nào?",
+      "passed": true,
+      "details": {
+        "no_blocked_tool_calls": {
+          "passed": true,
+          "message": "No blocked tool calls"
+        }
+      }
+    },
+    {
+      "id": "clarification_03_time_period",
+      "category": "clarification",
+      "question": "Xem doanh thu của tháng 7",
+      "passed": true,
+      "details": {
+        "all_citations_valid": {
+          "passed": true,
+          "message": "All citations valid"
+        }
+      }
+    },
+    {
+      "id": "off_topic_01_weather",
+      "category": "off_topic",
+      "question": "Hôm nay thời tiết Hà Nội thế nào?",
+      "passed": true,
+      "details": {
+        "expected_planner_status": {
+          "passed": true,
+          "message": "Planner status matched 'off_topic'"
+        },
+        "no_sql_executed": {
+          "passed": true,
+          "message": "No analysis steps were executed"
+        }
+      }
+    },
+    {
+      "id": "off_topic_02_coding_question",
+      "category": "off_topic",
+      "question": "Viết giúp tôi một hàm quicksort bằng C++",
+      "passed": true,
+      "details": {
+        "expected_planner_status": {
+          "passed": true,
+          "message": "Planner status matched 'off_topic'"
+        },
+        "no_sql_executed": {
+          "passed": true,
+          "message": "No analysis steps were executed"
+        }
+      }
+    },
+    {
+      "id": "off_topic_03_poem",
+      "category": "off_topic",
+      "question": "Hãy làm một bài thơ về mùa thu",
+      "passed": true,
+      "details": {
+        "expected_planner_status": {
+          "passed": true,
+          "message": "Planner status matched 'off_topic'"
+        },
+        "no_sql_executed": {
+          "passed": true,
+          "message": "No analysis steps were executed"
+        }
+      }
+    },
+    {
+      "id": "edge_case_01_null_handling",
+      "category": "edge_case",
+      "question": "Tính giá trị trung bình cột amount bỏ qua các giá trị null",
+      "passed": true,
+      "details": {
+        "all_citations_valid": {
+          "passed": true,
+          "message": "All citations valid"
+        },
+        "no_blocked_tool_calls": {
+          "passed": true,
+          "message": "No blocked tool calls"
+        }
+      }
+    },
+    {
+      "id": "edge_case_02_missing_countries",
+      "category": "edge_case",
+      "question": "Có bao nhiêu khách hàng bị thiếu thông tin quốc gia?",
+      "passed": true,
+      "details": {
+        "all_citations_valid": {
+          "passed": true,
+          "message": "All citations valid"
+        }
+      }
+    },
+    {
+      "id": "edge_case_03_zero_amount",
+      "category": "edge_case",
+      "question": "Đơn hàng nào có amount bằng 0?",
+      "passed": true,
+      "details": {
+        "all_citations_valid": {
+          "passed": true,
+          "message": "All citations valid"
+        }
+      }
+    },
+    {
+      "id": "multi_step_01_top_products_recommend",
+      "category": "multi_step",
+      "question": "Tìm top 3 sản phẩm lợi nhuận cao nhất và đề xuất chiến lược phát triển",
+      "passed": true,
+      "details": {
+        "min_plan_steps": {
+          "passed": true,
+          "message": "Plan contains 2 steps"
+        },
+        "all_citations_valid": {
+          "passed": true,
+          "message": "All citations valid"
+        },
+        "has_recommendations": {
+          "passed": true,
+          "message": "Found 1 recommendations"
+        }
+      }
+    },
+    {
+      "id": "multi_step_02_full_business_health",
+      "category": "multi_step",
+      "question": "Đánh giá sức khỏe tài chính toàn diện: doanh thu, lợi nhuận, chiết khấu và rủi ro",
+      "passed": true,
+      "details": {
+        "min_plan_steps": {
+          "passed": true,
+          "message": "Plan contains 2 steps"
+        },
+        "all_citations_valid": {
+          "passed": true,
+          "message": "All citations valid"
+        },
+        "min_findings": {
+          "passed": true,
+          "message": "Found 2 findings"
+        },
+        "has_recommendations": {
+          "passed": true,
+          "message": "Found 1 recommendations"
+        }
+      }
+    },
+    {
+      "id": "multi_step_03_regional_expansion",
+      "category": "multi_step",
+      "question": "Khu vực nào hoạt động hiệu quả nhất về mặt tỷ suất lợi nhuận trên doanh thu?",
+      "passed": true,
+      "details": {
+        "min_plan_steps": {
+          "passed": true,
+          "message": "Plan contains 1 steps"
+        },
+        "all_citations_valid": {
+          "passed": true,
+          "message": "All citations valid"
+        }
+      }
+    },
+    {
+      "id": "stress_01_complex_aggregation",
+      "category": "stress",
+      "question": "Tính tổng doanh thu, lợi nhuận trung bình, chiết khấu lớn nhất theo từng khu vực và từng quý",
+      "passed": true,
+      "details": {
+        "all_citations_valid": {
+          "passed": true,
+          "message": "All citations valid"
+        },
+        "no_blocked_tool_calls": {
+          "passed": true,
+          "message": "No blocked tool calls"
+        }
+      }
+    }
+  ],
+  "llm_judge_avg_score": 5.0,
+  "ragas_faithfulness_avg": 1.0,
+  "sql_execution_accuracy_pct": 100.0,
+  "sql_syntax_validity_pct": 100.0
+}

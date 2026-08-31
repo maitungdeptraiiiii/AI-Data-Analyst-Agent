@@ -13,6 +13,10 @@ dependencies = [
     "langgraph-checkpoint-sqlite>=3.0",
     "langchain-anthropic>=0.3",
     "langchain-openai>=0.3",
+    "langchain-google-genai>=4.0",
+    "langchain-groq>=0.1",
+    "groq>=0.9",
+    "google-genai>=2.0",
     "openai>=1.0,<2.0",
     "matplotlib>=3.9",
     "pandas>=2.2",
@@ -20,6 +24,9 @@ dependencies = [
     "pydantic>=2.9",
     "pydantic-settings>=2.5",
     "redis>=5.0",
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "python-multipart>=0.0.12",
 ]
 
 [dependency-groups]
@@ -34,12 +41,14 @@ dev = [
 [project.scripts]
 analyst-agent = "analyst_agent.cli:main"
 analyst-agent-tool-worker = "analyst_agent.workers.tool_worker:main"
+analyst-agent-eval = "eval.eval_runner:main"
+analyst-agent-api = "analyst_agent.api.cli:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/analyst_agent"]
 
 [tool.pytest.ini_options]
-pythonpath = ["src"]
+pythonpath = ["src", "."]
 testpaths = ["tests"]
 markers = [
     "integration: requires a running PostgreSQL instance",

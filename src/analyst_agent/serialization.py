@@ -80,4 +80,3 @@ def extract_metrics(rows: list[dict[str, object]], max_rows: int = 50) -> dict[s
             assert numeric is not None
             metrics[f"{column}__{slug}"] = numeric
     return metrics
-

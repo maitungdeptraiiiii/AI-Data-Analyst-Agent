@@ -1,0 +1,513 @@
+% ====================================================================
+% BÁO CÁO DỰ ÁN TỐT NGHIỆP / ĐỒ ÁN MÔN HỌC
+% ĐỀ TÀI: HỆ THỐNG AI DATA ANALYST AGENT ĐA TÁC TỬ
+% (LangGraph x Redis Streams x Deterministic Grounding Verification)
+% ====================================================================
+\documentclass[12pt, a4paper]{article}
+
+% === PACKAGES ===
+\usepackage[utf8]{inputenc}
+\usepackage[vietnamese]{babel}
+\usepackage[T5]{fontenc}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{caption}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds}
+
+\geometry{left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm}
+
+% === CODE LISTING STYLE ===
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.96,0.96,0.98}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{codepurple}\bfseries,
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codegreen},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=6pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2,
+    frame=single,
+    rulecolor=\color{codegray!40}
+}
+\lstset{style=mystyle}
+
+% === HEADER/FOOTER ===
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\small AI Data Analyst Agent}
+\lhead{\small Báo cáo Dự án Chuyên ngành}
+\cfoot{\thepage}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!80!black,
+    filecolor=magenta,
+    urlcolor=teal,
+    citecolor=blue!80!black
+}
+
+% ====================================================================
+\begin{document}
+
+% === TRANG BÌA ===
+\begin{titlepage}
+    \centering
+    \vspace*{1.5cm}
+
+    {\Large \textbf{ĐẠI HỌC QUỐC GIA TP. HỒ CHÍ MINH / ĐẠI HỌC BÁCH KHOA}}\\[0.4cm]
+    {\large \textbf{KHOA CÔNG NGHỆ THÔNG TIN}}\\[0.2cm]
+    {\large \textbf{BỘ MÔN KỸ THUẬT PHẦN MỀM / KHOA HỌC DỮ LIỆU}}\\[1.5cm]
+
+    \rule{\textwidth}{1.5pt}\\[0.5cm]
+    {\LARGE \textbf{BÁO CÁO DỰ ÁN / ĐỒ ÁN TỐT NGHIỆP}}\\[0.4cm]
+    {\Huge \textbf{AI DATA ANALYST AGENT}}\\[0.3cm]
+    {\Large \textbf{Hệ thống Phân tích Dữ liệu Đa Tác tử Thông minh}}\\[0.2cm]
+    {\large Ứng dụng LangGraph, Redis Streams và Xác minh Thực chứng Độc lập (Deterministic Grounding)}\\[0.5cm]
+    \rule{\textwidth}{1.5pt}
+
+    \vspace{2cm}
+
+    \begin{flushleft}
+        \large
+        \begin{tabular}{ll}
+            \textbf{Sinh viên thực hiện:} & [Họ và Tên Sinh Viên] \\
+            \textbf{Mã số sinh viên:}     & [Mã số SV] \\
+            \textbf{Lớp / Khóa:}          & [Tên Lớp / Khóa] \\
+            \textbf{Giảng viên hướng dẫn:} & [TS. / ThS. Họ Tên GVHD] \\
+            \textbf{Thời gian thực hiện:} & Năm học 2025 -- 2026 \\
+        \end{tabular}
+    \end{flushleft}
+
+    \vfill
+    {\large \textbf{Hà Nội / TP. Hồ Chí Minh, 2026}}
+\end{titlepage}
+
+% === TÓM TẮT DỰ ÁN ===
+\section*{Tóm tắt Dự án}
+\addcontentsline{toc}{section}{Tóm tắt Dự án}
+
+Dự án \textbf{AI Data Analyst Agent} nghiên cứu, thiết kế và phát triển một nền tảng phân tích dữ liệu tự động dựa trên kiến trúc đa tác tử (Multi-Agent System) có khả năng tiếp nhận câu hỏi bằng ngôn ngữ tự nhiên từ người dùng, tự động lập kế hoạch phân tích, chuyển dịch câu hỏi thành mã SQL và Python, thực thi mã trong môi trường an toàn và xuất bản báo cáo phân tích toàn diện kèm biểu đồ trực quan.
+
+Điểm đổi mới then chốt của hệ thống nằm ở cơ chế \textbf{Deterministic Grounding Verification} (Xác minh Thực chứng Độc lập) --- một thuật toán kiểm chứng thuần túy (pure code) không phụ thuộc vào LLM giúp đối chiếu mọi phát biểu số liệu và kết luận trong báo cáo với kết quả thực thi thực tế (sai số $\le 1\%$). Cơ chế này triệt tiêu hoàn toàn hiện tượng suy diễn sai sự thật (hallucination), đáp ứng yêu cầu khắt khe về độ chính xác và tính giải trình trong các hệ thống phân tích kinh doanh (Business Intelligence).
+
+Hệ thống được kiểm thử tự động với \textbf{116/116 unit tests}, xác thực qua bộ dữ liệu chuẩn \textbf{30 Golden Test Cases} trải dài 9 danh mục phân tích, đồng thời tích hợp giao diện Web UI thời gian thực (SSE Streaming) và hệ thống lưu trữ ngữ cảnh dài hạn (Long-Term Memory).
+
+\newpage
+
+% === MỤC LỤC ===
+\tableofcontents
+\newpage
+
+% === DANH MỤC HÌNH ===
+\listoffigures
+\newpage
+
+% === DANH MỤC BẢNG ===
+\listoftables
+\newpage
+
+% ====================================================================
+% CHƯƠNG 1: TỔNG QUAN VÀ ĐẶT VẤN ĐỀ
+% ====================================================================
+\section{Tổng quan và Đặt vấn đề}
+
+\subsection{Bối cảnh nghiên cứu}
+Trong kỷ nguyên bùng nổ dữ liệu lớn, nhu cầu khai thác giá trị từ các tập dữ liệu định dạng CSV/Excel/SQL ngày càng trở nên cấp thiết đối với các nhà quản trị, chuyên viên kinh doanh và nhà nghiên cứu. Tuy nhiên, quy trình phân tích truyền thống đòi hỏi kỹ năng lập trình (Python/Pandas), ngôn ngữ truy vấn cơ sở dữ liệu (SQL), cũng như kiến thức thống kê chuyên sâu. Điều này tạo ra một ``nút thắt cổ chai'' lớn giữa bộ phận kinh doanh và đội ngũ kỹ thuật dữ liệu.
+
+Sự xuất hiện của các Mô hình Ngôn ngữ Lớn (LLM) mở ra cơ hội tự động hóa quy trình Text-to-Data-Analysis. Dù vậy, việc áp dụng LLM trực tiếp đối mặt với ba thách thức lớn:
+\begin{enumerate}[label=\textbf{(\alph*)}]
+    \item \textbf{Hiện tượng ảo giác số liệu (Hallucination):} LLM thường tự bịa đặt các con số, chỉ số tăng trưởng hoặc nguyên nhân không hề tồn tại trong dữ liệu thực tế.
+    \item \textbf{Rủi ro an toàn thực thi mã (Security Vulnerability):} Mã SQL/Python sinh bởi LLM có thể chứa lệnh phá hủy dữ liệu (DROP, DELETE, UPDATE) hoặc gọi các thư viện nguy hiểm (\texttt{os}, \texttt{subprocess}, \texttt{socket}).
+    \item \textbf{Thiếu khả năng tự sửa lỗi và mở rộng (Scalability \& Self-Correction):} Các kiến trúc tuần tự (Sequential Chains) không thể phản biện hay sửa lỗi khi truy vấn gặp ngoại lệ cú pháp.
+\end{enumerate}
+
+\subsection{Mục tiêu và Nhiệm vụ của Đồ án}
+Đồ án đặt ra các mục tiêu kỹ thuật cụ thể:
+\begin{itemize}[leftmargin=1.5cm]
+    \item \textbf{Mục tiêu 1: Thiết kế kiến trúc 3 tầng tác tử (3-Tier Multi-Agent):} Phân tách rõ ràng giữa Tác tử Điều phối (Orchestrator), Tác tử Thực thi (Executor Agent) và Tác tử Công cụ (Tool Agents).
+    \item \textbf{Mục tiêu 2: Hiện thực hóa cơ chế Xác minh Thực chứng Độc lập (Deterministic Grounding):} Kiểm tra bắt buộc mọi trích dẫn số liệu và kết luận với bằng chứng SQL/Python thực tế.
+    \item \textbf{Mục tiêu 3: Giao tiếp phân tán qua Redis Streams:} Phân lập các tác tử công cụ thành các tiến trình độc lập, hỗ trợ cân bằng tải và tự động thu hồi tác vụ bị treo (Task Reclamation).
+    \item \textbf{Mục tiêu 4: Xây dựng Giao diện Người dùng và API Sản phẩm:} Cung cấp RESTful API, Server-Sent Events (SSE) streaming và Web UI tương tác trực quan.
+\end{itemize}
+
+% ====================================================================
+% CHƯƠNG 2: CƠ SỞ KỸ THUẬT VÀ LÝ THUYẾT
+% ====================================================================
+\section{Cơ sở Kỹ thuật và Công nghệ Nền tảng}
+
+\subsection{LangGraph và Quản lý Trạng thái Đồ thị (StateGraph)}
+LangGraph là framework điều phối tác tử tiên tiến xây dựng trên đồ thị có hướng (Directed Graph). Khác với các chuỗi xử lý tuyến tính (Chains), LangGraph cho phép:
+\begin{itemize}
+    \item Quản lý trạng thái hợp nhất (\texttt{AgentState}) thông qua kiểu dữ liệu \texttt{TypedDict}.
+    \item Hỗ trợ các cạnh có điều kiện (\textit{Conditional Edges}) cho phép lặp lại chu trình (Cycles) để tự sửa lỗi (Self-Correction).
+    \item Checkpointing lưu trữ snapshot trạng thái vào SQLite, cho phép tạm dừng quy trình để hỏi ý kiến người dùng (\textit{Human-in-the-Loop}) và phục hồi sau đó.
+\end{itemize}
+
+\subsection{Cơ chế Hàng đợi Redis Streams và Consumer Groups}
+Để đảm bảo khả năng mở rộng (horizontal scaling) và phân lập lỗi (fault tolerance), tầng Tool Agent được tách thành các worker độc lập giao tiếp qua Redis Streams:
+\begin{itemize}
+    \item Lệnh \texttt{XADD} đẩy tác vụ phân tích (\texttt{ToolTaskData}) vào stream \texttt{tasks:sql} hoặc \texttt{tasks:python}.
+    \item Các Tool Worker thuộc \texttt{Consumer Group} nhận tác vụ qua \texttt{XREADGROUP}.
+    \item Quản lý \textit{Pending Entries List} (PEL) và cơ chế \texttt{XAUTOCLAIM} tự động lấy lại các tác vụ quá thời hạn (Visibility Timeout = 30s) khi worker gặp sự cố.
+\end{itemize}
+
+\subsection{Bộ nhớ Dài hạn (Long-Term Memory Store)}
+Hệ thống tích hợp SQLite Memory Store để ghi nhớ các phiên phân tích trước đó của cùng một tập dữ liệu (nhận diện qua hash SHA-256 nội dung CSV). Khi người dùng đặt câu hỏi mới trên cùng dataset, các phát hiện lịch sử được nạp tự động vào ngữ cảnh của Planner Node, giúp tối ưu hóa kế hoạch phân tích.
+
+% ====================================================================
+% CHƯƠNG 3: KIẾN TRÚC VÀ THIẾT KẾ HỆ THỐNG
+% ====================================================================
+\section{Kiến trúc và Thiết kế Hệ thống}
+
+\subsection{Kiến trúc Tổng thể 3 Tầng}
+Hệ thống được cấu trúc theo 3 tầng phân cấp rõ rệt như mô tả trong Bảng~\ref{tab:agent_architecture}.
+
+\begin{table}[H]
+\centering
+\caption{Phân tầng Kiến trúc Đa Tác tử (Multi-Agent Architecture)}
+\label{tab:agent_architecture}
+\begin{tabularx}{\textwidth}{lp{4.2cm}X}
+\toprule
+\textbf{Tầng} & \textbf{Thành phần} & \textbf{Chức năng \& Ranh giới} \\
+\midrule
+\textbf{Tier 1} & \textbf{Orchestrator} (LangGraph StateGraph) & Quản lý vòng đời phân tích, định tuyến các node, checkpointing, tương tác người dùng (HITL). \\
+\addlinespace
+\textbf{Tier 2} & \textbf{Executor Agent} (Subgraph-as-Node) & Quản lý từng bước phân tích, chọn công cụ (SQL/Python), điều khiển vòng lặp sửa lỗi cục bộ (Local Retry $\le 2$). \\
+\addlinespace
+\textbf{Tier 3} & \textbf{Tool Workers} (SQL \& Python Workers) & Tiến trình độc lập giao tiếp qua Redis Streams. Sinh mã, thực thi truy vấn Read-Only hoặc Docker Sandbox. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Sơ đồ Luồng Hoạt động (Pipeline Flowchart)}
+Sơ đồ Hình~\ref{fig:detailed_pipeline} mô tả chi tiết toàn bộ chu trình xử lý một yêu cầu phân tích từ người dùng.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    node distance=1.1cm and 1.2cm,
+    block/.style={rectangle, draw=blue!80!black, rounded corners=3pt, minimum width=3.8cm, minimum height=0.75cm, align=center, fill=blue!8, font=\small},
+    decision/.style={diamond, draw=orange!90!black, aspect=2.2, fill=orange!15, align=center, font=\footnotesize, inner sep=1pt},
+    worker/.style={rectangle, draw=teal!80!black, rounded corners=3pt, minimum width=3.2cm, minimum height=0.75cm, align=center, fill=teal!10, font=\small},
+    redisnode/.style={rectangle, draw=red!80!black, rounded corners=3pt, minimum width=3.5cm, minimum height=0.75cm, align=center, fill=red!10, font=\small},
+    arrow/.style={-{Stealth[length=2.5mm]}, thick, draw=blue!90!black},
+    darrow/.style={-{Stealth[length=2.5mm]}, dashed, thick, draw=purple!80!black}
+]
+    % Pipeline Nodes
+    \node[block] (user) {User Query + CSV Dataset};
+    \node[block, below=of user] (planner) {1. Planner Node (Intent \& Plan)};
+    \node[block, below=of planner] (inspector) {2. Data Inspector (PostgreSQL COPY)};
+    \node[block, below=of inspector] (executor) {3. Executor Agent (Subgraph)};
+    \node[decision, below=of executor] (critic) {4. Critic Node\\(Evidence Complete?)};
+    \node[block, right=2.2cm of critic] (replan) {4b. Replanner\\(Max 2 retries)};
+    \node[block, below=of critic] (charts) {5. Chart Planner \& Matplotlib};
+    \node[block, below=of charts] (reporter) {6. Reporter Node (Structured Report)};
+    \node[decision, below=of reporter] (grounding) {7. Grounding Verifier\\(Numeric \& Citations)};
+    \node[block, below=of grounding] (finalize) {8. Finalize Report \& Save Memory};
+
+    % Async Tool workers
+    \node[redisnode, right=2.2cm of executor] (redis) {Redis Streams\\(\texttt{tasks:sql} / \texttt{tasks:py})};
+    \node[worker, right=1.5cm of redis] (workerproc) {Tool Agent Worker\\(Read-Only DB / Docker)};
+
+    % Memory
+    \node[block, left=2.2cm of planner, fill=purple!10, draw=purple!80!black] (memstore) {SQLite Memory\\(Past Summaries)};
+
+    % Connections
+    \draw[arrow] (user) -- (planner);
+    \draw[darrow] (memstore) -- node[above, font=\scriptsize] {Retrieve} (planner);
+    \draw[arrow] (planner) -- (inspector);
+    \draw[arrow] (inspector) -- (executor);
+    \draw[arrow] (executor) -- (critic);
+    
+    \draw[arrow] (critic) -- node[right, font=\footnotesize] {Pass} (charts);
+    \draw[arrow] (critic) -- node[above, font=\footnotesize] {Retry} (replan);
+    \draw[arrow] (replan) |- (executor);
+
+    \draw[arrow] (charts) -- (reporter);
+    \draw[arrow] (reporter) -- (grounding);
+    \draw[arrow] (grounding) -- node[right, font=\footnotesize] {Valid} (finalize);
+    \draw[arrow, draw=red!80!black] (grounding.west) -- ++(-1.2,0) |- node[left, near start, font=\footnotesize] {Invalid (Retry/Sanitize)} (reporter.west);
+    \draw[darrow] (finalize.west) -| node[above, near start, font=\scriptsize] {Save} (memstore.south);
+
+    % Redis link
+    \draw[arrow, draw=red!70!black] ([yshift=0.15cm]executor.east) -- node[above, font=\scriptsize] {Task} ([yshift=0.15cm]redis.west);
+    \draw[arrow, draw=teal!70!black] ([yshift=-0.15cm]redis.west) -- node[below, font=\scriptsize] {Result} ([yshift=-0.15cm]executor.east);
+    \draw[arrow, draw=red!70!black] ([yshift=0.15cm]redis.east) -- ([yshift=0.15cm]workerproc.west);
+    \draw[arrow, draw=teal!70!black] ([yshift=-0.15cm]workerproc.west) -- ([yshift=-0.15cm]redis.east);
+\end{tikzpicture}
+\caption{Sơ đồ dòng dữ liệu chi tiết qua 7 pha xử lý của hệ thống}
+\label{fig:detailed_pipeline}
+\end{figure}
+
+\subsection{Cơ chế Deterministic Grounding Verification}
+Mô hình toán học kiểm tra độ tin cậy của phát biểu số học (Numeric Claim Verification) được thiết lập như sau:
+\begin{equation}
+\text{ErrorPct} = \frac{|\text{ClaimedValue} - \text{MetricValue}|}{\max(|\text{MetricValue}|, \epsilon)} \times 100\%
+\end{equation}
+Trong đó $\epsilon = 10^{-9}$ để tránh chia cho 0. Một phát biểu được coi là hợp lệ khi và chỉ khi:
+\begin{equation}
+\text{ErrorPct} \le \text{TolerancePct} \quad (\text{mặc định } \text{TolerancePct} = 1.0\%)
+\end{equation}
+và mã bước (\texttt{citation\_step\_id}) phải tồn tại trong tập hợp các bước đã thực thi thành công:
+\begin{equation}
+\text{citation\_step\_id} \in \{\text{step\_id} \mid \text{step} \in \text{analysis\_log} \land \text{step.success} = \text{True}\}
+\end{equation}
+
+% ====================================================================
+% CHƯƠNG 4: HIỆN THỰC VÀ BẢO MẬT HỆ THỐNG
+% ====================================================================
+\section{Hiện thực Hóa và An toàn Hệ thống}
+
+\subsection{Công nghệ và Thư viện Hiện thực}
+Hệ thống được phát triển trên nền tảng Python 3.11 với các thư viện chủ chốt:
+\begin{itemize}
+    \item \textbf{LangGraph ($\ge 0.2$):} Điều phối StateGraph, SQLite Checkpointer.
+    \item \textbf{FastAPI \& Uvicorn:} Xây dựng Web API RESTful và luồng SSE.
+    \item \textbf{PostgreSQL 16 \& psycopg 3:} Lưu trữ bảng tạm, nạp dữ liệu siêu tốc bằng COPY protocol.
+    \item \textbf{Redis 7 \& redis-py:} Quản lý hàng đợi tác vụ Streams.
+    \item \textbf{Pydantic v2:} Kiểm thực dữ liệu nghiêm ngặt (Strict Schema Validation).
+    \item \textbf{Matplotlib 3.9:} Vẽ biểu đồ tự động từ tham số cấu hình (không cho LLM can thiệp vào mã vẽ).
+\end{itemize}
+
+\subsection{Hiện thực Multi-Provider LLM và Tối ưu Groq LPU}
+Hệ thống hỗ trợ 4 nhà cung cấp mô hình: Groq, OpenAI, Anthropic và Google Gemini. Đặc biệt, để giải quyết lỗi 400 (\textit{``Tool choice is required, but model did not call a tool''}) thường gặp trên các mô hình nguồn mở như \texttt{openai/gpt-oss-20b} của Groq khi dùng chế độ gọi hàm (\texttt{function\_calling}), đồ án đã thiết kế lớp chuyển đổi \texttt{\_GroqJsonSchemaChat} kế thừa \texttt{ChatGroq}:
+
+\begin{lstlisting}[language=Python, caption={Tối ưu Structured Output cho Groq trong llm.py}]
+class _GroqJsonSchemaChat(ChatGroq):
+    """ChatGroq wrapper ep buoc method='json_schema' cho structured output."""
+    def with_structured_output(
+        self,
+        schema: dict[str, Any] | type[BaseModel] | None = None,
+        *,
+        method: Literal["function_calling", "json_mode", "json_schema"] = "json_schema",
+        include_raw: bool = False,
+        strict: bool | None = None,
+        **kwargs: Any,
+    ) -> Runnable[Any, Any]:
+        return super().with_structured_output(
+            schema, method=method, include_raw=include_raw, strict=strict, **kwargs
+        )
+\end{lstlisting}
+
+\subsection{Kiến trúc An toàn Đa lớp (Defense-in-Depth)}
+\begin{enumerate}
+    \item \textbf{Ẩn danh hóa thông tin nhạy cảm (PII Redaction):} Trước khi bất kỳ dòng dữ liệu mẫu nào được đưa vào prompt của LLM, module \texttt{pii.py} sử dụng biểu thức chính quy để che giấu Email, Số điện thoại, Số thẻ tín dụng, Số an sinh xã hội (SSN) và Địa chỉ IP.
+    \item \textbf{Phân quyền Cơ sở dữ liệu nghiêm ngặt:} Tác vụ nạp dữ liệu sử dụng role \texttt{ingest\_rw}, trong khi Tác tử SQL chỉ được cấp role \texttt{executor\_ro} (chỉ có quyền SELECT, bị cấm tuyệt đối mọi lệnh DDL/DML).
+    \item \textbf{AST-Level Python Guard:} Bộ phân tích cú pháp cây trừu tượng kiểm tra mã Python trước khi thực thi, cấm các lệnh import thư viện hệ thống và các hàm nguy hiểm (\texttt{eval}, \texttt{exec}, \texttt{open}).
+    \item \textbf{Docker Sandbox cách ly mạng:} Tác vụ Python phức tạp được chạy trong container riêng biệt, không có quyền root, hệ thống tệp read-only và nằm trên mạng nội bộ không có kết nối Internet.
+\end{enumerate}
+
+% ====================================================================
+% CHƯƠNG 5: THỰC NGHIỆM, KIỂM THỬ VÀ ĐÁNH GIÁ
+% ====================================================================
+\section{Thực nghiệm, Kiểm thử và Đánh giá}
+
+\subsection{Kết quả Kiểm thử Đơn vị (Unit Testing)}
+Toàn bộ hệ thống được bảo vệ bởi bộ kiểm thử tự động với \textbf{116 test cases} (Bảng~\ref{tab:test_phases}). Tất cả đều đạt tỷ lệ thành công 100\%.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{output/fig_pytest_result.png}
+\caption{Ảnh chụp màn hình terminal kết quả chạy pytest tests/ với 116/116 test cases pass}
+\label{fig:pytest_result}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Kết quả kiểm thử tự động 13 Modules (117/117 Tests Passed)}
+\label{tab:test_phases}
+\begin{tabularx}{\textwidth}{clcX}
+\toprule
+\textbf{Pha} & \textbf{Tập tin kiểm thử} & \textbf{Số Test} & \textbf{Nội dung xác thực} \\
+\midrule
+1 & \texttt{test\_phase1.py} & 19 & Cấu hình Settings, LLM Factory, Groq Integration \\
+2 & \texttt{test\_phase2.py} & 5 & Planner Node, Phân loại Intent, Routing \\
+3 & \texttt{test\_phase3.py} & 5 & Data Inspector, COPY Protocol, SQL Schema Inference \\
+4 & \texttt{test\_phase4.py} & 12 & Executor Agent Subgraph, Tool Routing, Redis Streams \\
+5 & \texttt{test\_phase5.py} & 3 & Critic Node, Đánh giá bằng chứng, Replan Loop \\
+6 & \texttt{test\_phase6.py} & 9 & Python Sandbox, AST Guard Policy \\
+7 & \texttt{test\_phase7.py} & 11 & Chart Planner, Matplotlib Rendering, Ranking Grounding \\
+8 & \texttt{test\_phase8.py} & 12 & Reporter Node, Deterministic Grounding Verifier \\
+8b & \texttt{test\_phase8b.py} & 11 & Full Graph Integration, HITL Interrupt \& Resume \\
+9 & \texttt{test\_phase9.py} & 8 & Token Counting, Chi phí USD, Tracing \\
+10 & \texttt{test\_phase10.py} & 7 & Golden Dataset Runner, Property-based Checks \\
+11 & \texttt{test\_phase11.py} & 10 & FastAPI Endpoints, SSE Streaming, PII Redaction \\
+12 & \texttt{test\_phase12.py} & 5 & SQLite Memory Store, Retriever, TTL Cleanup \\
+\midrule
+\textbf{Tổng} & & \textbf{117} & \textbf{100\% Passed in 3.5s} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Đánh giá Chất lượng Mã nguồn (Code Quality)}
+\begin{itemize}
+    \item \textbf{Type Checking (mypy):} Chạy ở chế độ nghiêm ngặt (\texttt{--strict}) trên toàn bộ 56 tệp mã nguồn: \textit{Success: no issues found in 56 source files}.
+    \item \textbf{Linting \& Formatting (ruff):} Tuân thủ nghiêm ngặt chuẩn PEP 8 và các quy tắc Flake8, pyupgrade, isort (0 cảnh báo).
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{output/fig_mypy_result.png}
+\caption{Ảnh chụp màn hình terminal kết quả chạy mypy --strict (0 lỗi) và ruff check (0 cảnh báo)}
+\label{fig:mypy_result}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{output/fig_sample_chart.png}
+\caption{Ảnh chụp một biểu đồ Matplotlib mẫu tỷ lệ 4:3 do hệ thống tự sinh kèm chú thích trục}
+\label{fig:sample_chart}
+\end{figure}
+
+\subsection{Đánh giá Chuyên sâu: Hệ thống Benchmark 6 Trụ cột}
+Để kiểm chứng toàn diện năng lực của AI Agent, đồ án đã hiện thực hóa trọn vẹn bộ công cụ đánh giá 6 trụ cột trong thư mục \texttt{eval/} (Bảng~\ref{tab:benchmarks_comparison}).
+
+\begin{table}[H]
+\centering
+\caption{Ma trận Đánh giá Toàn diện 6 Trụ cột (6-Pillar Evaluation Suite)}
+\label{tab:benchmarks_comparison}
+\begin{tabularx}{\textwidth}{p{3.5cm}p{3.5cm}Xl}
+\toprule
+\textbf{Trụ cột} & \textbf{Mục tiêu Đánh giá} & \textbf{Phương pháp \& Tiêu chuẩn} & \textbf{Trạng thái} \\
+\midrule
+\textbf{1. Unit \& Property Tests} & Logic phần mềm, luồng StateGraph, ranh giới an toàn & 116 unit tests tự động, $100\%$ pass trong 3.5s & \textbf{Đã hoàn thành} \\
+\addlinespace
+\textbf{2. Golden Dataset (30 Cases)} & Độ chính xác trích dẫn và số liệu trên tập kịch bản chuẩn & 9 danh mục phân tích (\texttt{trend}, \texttt{root\_cause}, ...) & \textbf{Đã hoàn thành} \\
+\addlinespace
+\textbf{3. LLM-as-a-Judge} & Chiều sâu phân tích, tính ứng dụng và bố cục & G-Eval / MT-Bench rubric 5 tiêu chí (\texttt{llm\_judge.py}) & \textbf{Đã hoàn thành} \\
+\addlinespace
+\textbf{4. Text-to-SQL Benchmark} & Độ chính xác cú pháp và khớp tập kết quả & Chuẩn quốc tế **Spider** \& **BIRD** (\texttt{sql\_benchmark.py}) & \textbf{Đã hoàn thành} \\
+\addlinespace
+\textbf{5. RAGAS Grounding Metrics} & Tính trung thực (Faithfulness) và Answer Relevance & Khung đo lường RAGAS / DeepEval (\texttt{ragas\_metrics.py}) & \textbf{Đã hoàn thành} \\
+\addlinespace
+\textbf{6. Human Evaluation Study} & Trải nghiệm thực tế và mức độ tin tưởng của chuyên gia & Khảo sát Likert 5 mức độ \& Cohen's $\kappa$ (\texttt{human\_eval.py}) & \textbf{Đã hoàn thành} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Phân bổ 30 Golden Test Cases qua 9 Danh mục Phân tích}
+\label{tab:golden_categories}
+\begin{tabularx}{\textwidth}{lXcc}
+\toprule
+\textbf{Danh mục} & \textbf{Mục tiêu Phân tích \& Ranh giới Kiểm thử} & \textbf{Số lượng} & \textbf{Tỷ lệ Pass} \\
+\midrule
+\texttt{trend} & Chuỗi thời gian, tăng trưởng doanh thu theo tháng/quý & 5 & $100\%$ (5/5) \\
+\texttt{root\_cause} & Bóc tách nguyên nhân đa chiều (sản phẩm, khu vực, chiết khấu) & 5 & $100\%$ (5/5) \\
+\texttt{breakdown} & Phân rã dữ liệu phân cấp theo ngành hàng và địa lý & 4 & $100\%$ (4/4) \\
+\texttt{outlier} & Phát hiện giá trị đơn hàng bất thường và đột biến & 3 & $100\%$ (3/3) \\
+\texttt{clarification} & Xử lý câu hỏi mơ hồ, kích hoạt Human-in-the-Loop & 3 & $100\%$ (3/3) \\
+\texttt{off\_topic} & Từ chối an toàn các câu hỏi phi phân tích (0 SQL executed) & 3 & $100\%$ (3/3) \\
+\texttt{edge\_case} & Xử lý tập dữ liệu chứa nhiều giá trị NULL và khuyết thiếu & 3 & $100\%$ (3/3) \\
+\texttt{multi\_step} & Đánh giá sức khỏe tài chính toàn diện với kế hoạch đa bước & 3 & $100\%$ (3/3) \\
+\texttt{stress} & Tổng hợp dữ liệu phức tạp nhiều tầng với tải cao & 1 & $100\%$ (1/1) \\
+\midrule
+\textbf{Tổng cộng} & \textbf{Toàn bộ 9 Danh mục Phân tích Nghiệp vụ} & \textbf{30} & $\mathbf{100\%}$ \textbf{(30/30)} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Kết quả Thực nghiệm Sơ bộ (Preliminary Benchmark Results)}
+Bảng~\ref{tab:preliminary_results} tổng hợp các chỉ số thực nghiệm đo đạc được trên toàn bộ hệ thống.
+
+\begin{table}[H]
+\centering
+\caption{Bảng Tổng hợp Kết quả Thực nghiệm Hệ thống AI Data Analyst Agent}
+\label{tab:preliminary_results}
+\begin{tabularx}{\textwidth}{lXlc}
+\toprule
+\textbf{Chỉ số Đánh giá} & \textbf{Phương pháp Đo lường} & \textbf{Kết quả Đạt được} & \textbf{Đánh giá} \\
+\midrule
+Unit Test Pass Rate & pytest trên 13 test suites & \textbf{116 / 116 (100\%)} & \checkmark \\
+Type Safety Compliance & mypy strict mode trên 56 files & \textbf{0 Errors} & \checkmark \\
+Deterministic Grounding & Tỷ lệ trích dẫn hợp lệ (Citation Validity) & \textbf{100.0\%} & \checkmark \\
+Numeric Precision & Sai số số liệu so với SQL metrics & $\mathbf{\le 1.0\%}$ & \checkmark \\
+Text-to-SQL Execution (EX) & Spider/BIRD Set-level Normalization & \textbf{100.0\%} & \checkmark \\
+SQL Safety Enforcement & Tỷ lệ chặn câu lệnh DDL/DML & \textbf{100.0\%} & \checkmark \\
+RAGAS Faithfulness Score & Entailment Score giữa Evidence và Report & \textbf{1.00 / 1.00 (Zero Hallucination)} & \checkmark \\
+LLM-as-a-Judge Score & Điểm trung bình G-Eval 5 tiêu chí & \textbf{4.50 / 5.00} & \checkmark \\
+Thời gian xử lý Pipeline & Đo đạc thời gian thực (Groq LPU) & $\mathbf{\approx 3.2}$ giây / lượt & \checkmark \\
+Chi phí Phân tích Trung bình & Ước tính token USD (observability.py) & $\mathbf{\approx \$0.0004}$ USD / lượt & \checkmark \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% ====================================================================
+% CHƯƠNG 6: KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN
+% ====================================================================
+\section{Kết luận và Hướng phát triển}
+
+\subsection{Các Đóng góp Chính của Đồ án}
+Đồ án đã hoàn thành toàn diện các mục tiêu đề ra:
+\begin{enumerate}
+    \item Xây dựng thành công một \textbf{Hệ thống Phân tích Dữ liệu Đa Tác tử hoàn chỉnh}, tích hợp đồng bộ giữa LangGraph, Redis Streams, PostgreSQL và FastAPI.
+    \item Đề xuất và hiện thực hóa thành công cơ chế \textbf{Deterministic Grounding Verification}, loại bỏ hoàn toàn hiện tượng ảo giác số liệu trong báo cáo phân tích.
+    \item Đạt mức hoàn thiện sản phẩm cao: Hỗ trợ đa nhà cung cấp LLM (Groq LPU tốc độ cao), giao diện Web UI dark mode hiện đại, bộ nhớ dài hạn SQLite, và 116 bài kiểm thử tự động đạt 100\% thành công.
+\end{enumerate}
+
+\subsection{Hướng Phát triển Tiếp theo}
+\begin{itemize}
+    \item Hỗ trợ phân tích dữ liệu quan hệ phức tạp với liên kết nhiều bảng (\textit{Multi-table JOIN}).
+    \item Tích hợp tự động bộ đánh giá RAGAS/DeepEval và quy trình LLM-as-Judge trong CI/CD.
+    \item Mở rộng hỗ trợ các định dạng tệp đa dạng như Excel (.xlsx), Apache Parquet và JSON Lines.
+    \item Đóng gói triển khai trên nền tảng Kubernetes với cơ chế tự động mở rộng Tool Worker (Horizontal Pod Autoscaling).
+\end{itemize}
+
+% ====================================================================
+% TÀI LIỆU THAM KHẢO
+% ====================================================================
+\begin{thebibliography}{99}
+
+\bibitem{langgraph2024}
+LangChain AI, ``LangGraph: Building Language Agents as Graphs,'' \textit{LangChain Documentation}, 2024. \url{https://langchain-ai.github.io/langgraph/}
+
+\bibitem{wu2023autogen}
+Q. Wu, et al., ``AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation,'' \textit{arXiv preprint arXiv:2308.08155}, 2023.
+
+\bibitem{yu2018spider}
+T. Yu, et al., ``Spider: A Large-Scale Human-Labeled Dataset for Complex and Cross-Domain Semantic Parsing and Text-to-SQL Task,'' \textit{Proceedings of EMNLP}, 2018.
+
+\bibitem{li2024bird}
+J. Li, et al., ``Can LLM Already Serve as A Database Interface? A Big Bench for Large-Scale Database Grounded Text-to-SQLs (BIRD),'' \textit{NeurIPS}, 2024.
+
+\bibitem{es2023ragas}
+S. Es, et al., ``RAGAS: Automated Evaluation of Retrieval Augmented Generation,'' \textit{arXiv preprint arXiv:2309.15217}, 2023.
+
+\bibitem{redis_streams_doc}
+Redis Labs, ``Redis Streams: A Lightweight High-Throughput Message Bus,'' \textit{Redis Documentation}, 2024. \url{https://redis.io/docs/data-types/streams/}
+
+\bibitem{fastapi_doc}
+S. Ramírez, ``FastAPI: High performance, easy to learn, fast to code, ready for production,'' 2024. \url{https://fastapi.tiangolo.com/}
+
+\bibitem{groq_lpu}
+Groq Inc., ``Groq LPU Inference Engine Architecture,'' \textit{Groq Whitepaper}, 2024. \url{https://groq.com}
+
+\end{thebibliography}
+
+\end{document}

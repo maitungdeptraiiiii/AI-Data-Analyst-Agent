@@ -69,6 +69,24 @@ class ChartPlanOutput(BaseModel):
     reason: str
     chart: ChartSpec | None = None
 
+    @model_validator(mode="before")
+    @classmethod
+    def unwrap_nested_properties(cls, data: object) -> object:
+        if isinstance(data, dict):
+            # If the LLM nested fields inside 'properties', unwrap them
+            if "properties" in data and isinstance(data["properties"], dict):
+                props = data.pop("properties")
+                for k, v in props.items():
+                    if k not in data or data[k] is None:
+                        data[k] = v
+            # If should_create is true but chart is not at top-level
+            if data.get("should_create") and not data.get("chart"):
+                for candidate_key in ("chart_spec", "spec", "chart_plan"):
+                    if candidate_key in data and isinstance(data[candidate_key], dict):
+                        data["chart"] = data.pop(candidate_key)
+                        break
+        return data
+
     @model_validator(mode="after")
     def validate_decision(self) -> "ChartPlanOutput":
         if self.should_create != (self.chart is not None):

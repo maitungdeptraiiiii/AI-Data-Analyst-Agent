@@ -212,9 +212,7 @@ def test_retryable_error_under_budget_routes_to_retry() -> None:
             "retryable": True,
         },
     }
-    state = executor_agent_state(
-        tool_result=tool_result, local_retry_count=0, local_max_retries=2
-    )
+    state = executor_agent_state(tool_result=tool_result, local_retry_count=0, local_max_retries=2)
     assert executor_agent.route_after_dispatch(state) == "retry"
 
 
@@ -230,9 +228,7 @@ def test_retry_cap_routes_to_finalize() -> None:
             "retryable": True,
         },
     }
-    state = executor_agent_state(
-        tool_result=tool_result, local_retry_count=2, local_max_retries=2
-    )
+    state = executor_agent_state(tool_result=tool_result, local_retry_count=2, local_max_retries=2)
     assert executor_agent.route_after_dispatch(state) == "finalize"
 
 

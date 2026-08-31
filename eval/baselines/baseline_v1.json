@@ -1,0 +1,16 @@
+{
+  "total_cases": 30,
+  "passed_cases": 28,
+  "pass_rate_pct": 93.33,
+  "by_category": {
+    "trend": { "total": 5, "passed": 5 },
+    "root_cause": { "total": 5, "passed": 5 },
+    "breakdown": { "total": 4, "passed": 4 },
+    "outlier": { "total": 3, "passed": 3 },
+    "clarification": { "total": 3, "passed": 3 },
+    "off_topic": { "total": 3, "passed": 3 },
+    "edge_case": { "total": 3, "passed": 3 },
+    "multi_step": { "total": 3, "passed": 2 },
+    "stress": { "total": 1, "passed": 0 }
+  }
+}

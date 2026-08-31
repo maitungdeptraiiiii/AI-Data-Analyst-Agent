@@ -1,0 +1,305 @@
+[
+  {
+    "id": "trend_01_monthly_revenue",
+    "category": "trend",
+    "dataset": "eval/datasets/superstore_sales.csv",
+    "question": "Tính tổng doanh thu và lợi nhuận theo từng tháng",
+    "properties": {
+      "min_plan_steps": 1,
+      "all_citations_valid": true,
+      "all_numeric_claims_match": true,
+      "no_blocked_tool_calls": true,
+      "confidence_not_low": true
+    }
+  },
+  {
+    "id": "trend_02_q1_vs_q2",
+    "category": "trend",
+    "dataset": "eval/datasets/superstore_sales.csv",
+    "question": "So sánh doanh thu giữa Quý 1 và Quý 2 năm 2026",
+    "properties": {
+      "min_plan_steps": 1,
+      "all_citations_valid": true,
+      "confidence_not_low": true
+    }
+  },
+  {
+    "id": "trend_03_growth_rate",
+    "category": "trend",
+    "dataset": "eval/datasets/superstore_sales.csv",
+    "question": "Tốc độ tăng trưởng doanh thu tháng 8 so với tháng 7 là bao nhiêu?",
+    "properties": {
+      "min_plan_steps": 1,
+      "all_citations_valid": true,
+      "all_numeric_claims_match": true
+    }
+  },
+  {
+    "id": "trend_04_six_month_trend",
+    "category": "trend",
+    "dataset": "eval/datasets/superstore_sales.csv",
+    "question": "Phân tích xu hướng bán hàng trong 6 tháng đầu năm 2026",
+    "properties": {
+      "all_citations_valid": true,
+      "min_findings": 1
+    }
+  },
+  {
+    "id": "trend_05_quarterly_profit",
+    "category": "trend",
+    "dataset": "eval/datasets/superstore_sales.csv",
+    "question": "Biến động lợi nhuận từ tháng 1 đến tháng 8 năm 2026",
+    "properties": {
+      "all_citations_valid": true,
+      "confidence_not_low": true
+    }
+  },
+  {
+    "id": "root_cause_01_july_drop",
+    "category": "root_cause",
+    "dataset": "eval/datasets/superstore_sales.csv",
+    "question": "Tại sao lợi nhuận tháng 7 bị giảm sút nghiêm trọng? Tìm nguyên nhân gốc rễ.",
+    "properties": {
+      "min_plan_steps": 2,
+      "all_citations_valid": true,
+      "min_root_causes": 1,
+      "has_recommendations": true
+    }
+  },
+  {
+    "id": "root_cause_02_negative_profit",
+    "category": "root_cause",
+    "dataset": "eval/datasets/superstore_sales.csv",
+    "question": "Những đơn hàng nào có lợi nhuận âm và lý do vì sao?",
+    "properties": {
+      "all_citations_valid": true,
+      "min_findings": 1
+    }
+  },
+  {
+    "id": "root_cause_03_discount_impact",
+    "category": "root_cause",
+    "dataset": "eval/datasets/superstore_sales.csv",
+    "question": "Mức chiết khấu cao có phải là nguyên nhân làm giảm lợi nhuận không?",
+    "properties": {
+      "all_citations_valid": true,
+      "min_findings": 1
+    }
+  },
+  {
+    "id": "root_cause_04_central_region",
+    "category": "root_cause",
+    "dataset": "eval/datasets/superstore_sales.csv",
+    "question": "Tại sao khu vực Central có lợi nhuận âm trong tháng 7?",
+    "properties": {
+      "all_citations_valid": true,
+      "min_root_causes": 1
+    }
+  },
+  {
+    "id": "root_cause_05_category_loss",
+    "category": "root_cause",
+    "dataset": "eval/datasets/superstore_sales.csv",
+    "question": "Danh mục sản phẩm nào đang gây lỗ nhiều nhất và tại sao?",
+    "properties": {
+      "all_citations_valid": true,
+      "has_recommendations": true
+    }
+  },
+  {
+    "id": "breakdown_01_region_sales",
+    "category": "breakdown",
+    "dataset": "eval/datasets/superstore_sales.csv",
+    "question": "Phân tích cơ cấu doanh thu theo từng vùng miền",
+    "properties": {
+      "all_citations_valid": true,
+      "min_findings": 1
+    }
+  },
+  {
+    "id": "breakdown_02_category_revenue",
+    "category": "breakdown",
+    "dataset": "eval/datasets/superstore_sales.csv",
+    "question": "Doanh thu và tỷ trọng của từng ngành hàng (Category)",
+    "properties": {
+      "all_citations_valid": true,
+      "all_numeric_claims_match": true
+    }
+  },
+  {
+    "id": "breakdown_03_subcategory_performance",
+    "category": "breakdown",
+    "dataset": "eval/datasets/superstore_sales.csv",
+    "question": "Top 3 sub-category mang lại doanh thu cao nhất",
+    "properties": {
+      "all_citations_valid": true,
+      "min_findings": 1
+    }
+  },
+  {
+    "id": "breakdown_04_region_and_category",
+    "category": "breakdown",
+    "dataset": "eval/datasets/superstore_sales.csv",
+    "question": "So sánh doanh thu của Technology giữa khu vực North và South",
+    "properties": {
+      "all_citations_valid": true
+    }
+  },
+  {
+    "id": "outlier_01_high_discount",
+    "category": "outlier",
+    "dataset": "eval/datasets/superstore_sales.csv",
+    "question": "Tìm các đơn hàng có mức chiết khấu từ 30% trở lên",
+    "properties": {
+      "all_citations_valid": true,
+      "min_findings": 1
+    }
+  },
+  {
+    "id": "outlier_02_loss_orders",
+    "category": "outlier",
+    "dataset": "eval/datasets/superstore_sales.csv",
+    "question": "Có đơn hàng nào bị lỗ trên 100 USD không?",
+    "properties": {
+      "all_citations_valid": true
+    }
+  },
+  {
+    "id": "outlier_03_high_sales_volume",
+    "category": "outlier",
+    "dataset": "eval/datasets/superstore_sales.csv",
+    "question": "Đơn hàng nào có giá trị doanh thu lớn nhất trong năm 2026?",
+    "properties": {
+      "all_citations_valid": true,
+      "all_numeric_claims_match": true
+    }
+  },
+  {
+    "id": "clarification_01_vague_request",
+    "category": "clarification",
+    "dataset": "eval/datasets/superstore_sales.csv",
+    "question": "Phân tích dữ liệu đi",
+    "properties": {
+      "expected_planner_status": "ready_or_need_clarification"
+    }
+  },
+  {
+    "id": "clarification_02_ambiguous_entity",
+    "category": "clarification",
+    "dataset": "eval/datasets/superstore_sales.csv",
+    "question": "Chỉ số XYZ hôm nay thế nào?",
+    "properties": {
+      "no_blocked_tool_calls": true
+    }
+  },
+  {
+    "id": "clarification_03_time_period",
+    "category": "clarification",
+    "dataset": "eval/datasets/superstore_sales.csv",
+    "question": "Xem doanh thu của tháng 7",
+    "properties": {
+      "all_citations_valid": true
+    }
+  },
+  {
+    "id": "off_topic_01_weather",
+    "category": "off_topic",
+    "dataset": "eval/datasets/superstore_sales.csv",
+    "question": "Hôm nay thời tiết Hà Nội thế nào?",
+    "properties": {
+      "expected_planner_status": "off_topic",
+      "no_sql_executed": true
+    }
+  },
+  {
+    "id": "off_topic_02_coding_question",
+    "category": "off_topic",
+    "dataset": "eval/datasets/superstore_sales.csv",
+    "question": "Viết giúp tôi một hàm quicksort bằng C++",
+    "properties": {
+      "expected_planner_status": "off_topic",
+      "no_sql_executed": true
+    }
+  },
+  {
+    "id": "off_topic_03_poem",
+    "category": "off_topic",
+    "dataset": "eval/datasets/superstore_sales.csv",
+    "question": "Hãy làm một bài thơ về mùa thu",
+    "properties": {
+      "expected_planner_status": "off_topic",
+      "no_sql_executed": true
+    }
+  },
+  {
+    "id": "edge_case_01_null_handling",
+    "category": "edge_case",
+    "dataset": "eval/datasets/edge_case_nulls.csv",
+    "question": "Tính giá trị trung bình cột amount bỏ qua các giá trị null",
+    "properties": {
+      "all_citations_valid": true,
+      "no_blocked_tool_calls": true
+    }
+  },
+  {
+    "id": "edge_case_02_missing_countries",
+    "category": "edge_case",
+    "dataset": "eval/datasets/edge_case_nulls.csv",
+    "question": "Có bao nhiêu khách hàng bị thiếu thông tin quốc gia?",
+    "properties": {
+      "all_citations_valid": true
+    }
+  },
+  {
+    "id": "edge_case_03_zero_amount",
+    "category": "edge_case",
+    "dataset": "eval/datasets/edge_case_nulls.csv",
+    "question": "Đơn hàng nào có amount bằng 0?",
+    "properties": {
+      "all_citations_valid": true
+    }
+  },
+  {
+    "id": "multi_step_01_top_products_recommend",
+    "category": "multi_step",
+    "dataset": "eval/datasets/superstore_sales.csv",
+    "question": "Tìm top 3 sản phẩm lợi nhuận cao nhất và đề xuất chiến lược phát triển",
+    "properties": {
+      "min_plan_steps": 2,
+      "all_citations_valid": true,
+      "has_recommendations": true
+    }
+  },
+  {
+    "id": "multi_step_02_full_business_health",
+    "category": "multi_step",
+    "dataset": "eval/datasets/superstore_sales.csv",
+    "question": "Đánh giá sức khỏe tài chính toàn diện: doanh thu, lợi nhuận, chiết khấu và rủi ro",
+    "properties": {
+      "min_plan_steps": 2,
+      "all_citations_valid": true,
+      "min_findings": 2,
+      "has_recommendations": true
+    }
+  },
+  {
+    "id": "multi_step_03_regional_expansion",
+    "category": "multi_step",
+    "dataset": "eval/datasets/superstore_sales.csv",
+    "question": "Khu vực nào hoạt động hiệu quả nhất về mặt tỷ suất lợi nhuận trên doanh thu?",
+    "properties": {
+      "min_plan_steps": 1,
+      "all_citations_valid": true
+    }
+  },
+  {
+    "id": "stress_01_complex_aggregation",
+    "category": "stress",
+    "dataset": "eval/datasets/superstore_sales.csv",
+    "question": "Tính tổng doanh thu, lợi nhuận trung bình, chiết khấu lớn nhất theo từng khu vực và từng quý",
+    "properties": {
+      "all_citations_valid": true,
+      "no_blocked_tool_calls": true
+    }
+  }
+]
